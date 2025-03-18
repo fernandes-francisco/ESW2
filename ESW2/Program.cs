@@ -1,4 +1,11 @@
+using Microsoft.EntityFrameworkCore;
+using ESW2.Context;
+
 var builder = WebApplication.CreateBuilder(args);
+
+
+builder.Services.AddDbContext<MyDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
