@@ -1,0 +1,27 @@
+﻿@{
+    ViewData["Title"] = "Atualizar para Administrador";
+}
+
+<h2>Atualizar Conta para Administrador</h2>
+
+@if (!string.IsNullOrEmpty(ViewBag.SuccessMessage))
+{
+    <div style="color: green;">@ViewBag.SuccessMessage</div>
+}
+
+@if (!string.IsNullOrEmpty(ViewBag.ErrorMessage))
+{
+    <div style="color: red;">@ViewBag.ErrorMessage</div>
+}
+
+<form method="post" asp-controller="Account" asp-action="UpgradeToAdmin">
+    <div>
+        <label>Usuário</label>
+        <input type="text" name="username" required />
+    </div>
+    <div>
+        <label>Senha para Administrador</label>
+        <input type="password" name="adminPassword" required />
+    </div>
+    <button type="submit">Atualizar</button>
+</form>

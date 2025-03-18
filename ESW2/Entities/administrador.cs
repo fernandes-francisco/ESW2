@@ -18,3 +18,5 @@ public partial class administrador
     [InverseProperty("id_adminNavigation")]
     public virtual ICollection<ativo_financeiro> ativo_financeiros { get; set; } = new List<ativo_financeiro>();
 }
+
+
