@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ESW2.Controllers
 {
-    [Authorize] // Apenas usuários logados podem acessar
+    [Authorize] // Apenas utilizadores autenticados podem aceder
     public class ClienteController : Controller
     {
         public IActionResult Perfil()

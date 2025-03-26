@@ -81,7 +81,7 @@ namespace ESW2.Controllers
 
                 if (existingUser != null)
                 {
-                    ViewBag.ErrorMessage = "Este nome de usuário já está em uso. Escolha outro.";
+                    ViewBag.ErrorMessage = "Este nome de utilizador já está em uso. Escolha outro.";
                     return View();
                 }
 
@@ -94,7 +94,7 @@ namespace ESW2.Controllers
                 return RedirectToAction("Login");
             }
 
-            ViewBag.ErrorMessage = "Erro ao tentar registrar. Verifique os dados e tente novamente.";
+            ViewBag.ErrorMessage = "Erro ao tentar registar. Verifique os dados e tente novamente.";
             return View();
         }
 
@@ -114,7 +114,7 @@ namespace ESW2.Controllers
 
             if (user == null)
             {
-                ViewBag.ErrorMessage = "Usuário não encontrado!";
+                ViewBag.ErrorMessage = "Utilizador não encontrado!";
                 return View();
             }
 
