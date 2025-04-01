@@ -3,9 +3,10 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using ESW2.Context;
 using ESW2.Entities;
-using Microsoft.EntityFrameworkCore;
+using ESW2.Models;
 
 namespace ESW2.Controllers
 {
@@ -20,6 +21,7 @@ namespace ESW2.Controllers
         }
 
         // GET: /Account/Login
+        [HttpGet]
         public IActionResult Login()
         {
             return View();
@@ -63,6 +65,7 @@ namespace ESW2.Controllers
         }
 
         // GET: /Account/Register
+        [HttpGet]
         public IActionResult Register()
         {
             return View();
@@ -75,7 +78,6 @@ namespace ESW2.Controllers
         {
             if (ModelState.IsValid)
             {
-                // Verifica se o username já existe
                 var existingUser = await _context.utilizadors
                     .FirstOrDefaultAsync(u => u.username == username);
 
@@ -85,7 +87,6 @@ namespace ESW2.Controllers
                     return View();
                 }
 
-                // Criar utilizador (sempre como cliente no início)
                 var newUser = new utilizador { username = username, password = password, isAdmin = false };
                 _context.utilizadors.Add(newUser);
                 await _context.SaveChangesAsync();
@@ -99,6 +100,7 @@ namespace ESW2.Controllers
         }
 
         // GET: /Account/UpgradeToAdmin
+        [HttpGet]
         public IActionResult UpgradeToAdmin()
         {
             return View();
@@ -130,6 +132,60 @@ namespace ESW2.Controllers
             }
 
             return View();
+        }
+
+        // GET: /Account/ForgotPassword
+        [HttpGet]
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
+
+        // POST: /Account/ForgotPassword
+        [HttpPost]
+        public IActionResult ForgotPassword(string email)
+        {
+            // Simulação de envio de email
+            TempData["Message"] = "Se o email existir, será enviado um link de redefinição.";
+            return RedirectToAction("Login");
+        }
+
+        // GET: /Account/ResetPassword
+        [HttpGet]
+        public IActionResult ResetPassword(string email, string token)
+        {
+            var model = new ResetPasswordViewModel
+            {
+                Email = email,
+                Token = token
+            };
+
+            return View(model);
+        }
+
+        // POST: /Account/ResetPassword
+        [HttpPost]
+        public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            // Procurar utilizador pelo email
+            var user = await _context.utilizadors
+                .FirstOrDefaultAsync(u => u.username == model.Email); // Se usares outro campo tipo "email", troca aqui
+
+            if (user == null)
+            {
+                ModelState.AddModelError("", "Utilizador não encontrado.");
+                return View(model);
+            }
+
+            // Atualizar a senha (⚠️ aqui não há hashing!)
+            user.password = model.NovaSenha;
+            await _context.SaveChangesAsync();
+
+            TempData["Message"] = "Senha redefinida com sucesso!";
+            return RedirectToAction("Login");
         }
 
         // GET: /Account/Logout

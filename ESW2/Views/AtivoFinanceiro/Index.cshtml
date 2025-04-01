@@ -1,0 +1,27 @@
+﻿@model IEnumerable<ESW2.Entities.ativo_financeiro>
+
+@{
+    ViewData["Title"] = "Meus Ativos Financeiros";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th>Data Início</th>
+        <th>Duração (meses)</th>
+        <th>Imposto (%)</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var ativo in Model)
+    {
+        <tr>
+            <td>@ativo.data_inicio</td>
+            <td>@ativo.duracao_meses</td>
+            <td>@ativo.percentual_imposto</td>
+        </tr>
+    }
+    </tbody>
+</table>
