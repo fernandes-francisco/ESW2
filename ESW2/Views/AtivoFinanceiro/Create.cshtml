@@ -1,0 +1,33 @@
+﻿@model ESW2.Entities.ativo_financeiro
+
+@{
+    ViewData["Title"] = "Adicionar Ativo Financeiro";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form asp-action="Create" method="post">
+    <div>
+        <label asp-for="data_inicio">Data de Início:</label>
+        <input asp-for="data_inicio" type="date" class="form-control" />
+        <span asp-validation-for="data_inicio" class="text-danger"></span>
+    </div>
+
+    <div>
+        <label asp-for="duracao_meses">Duração (meses):</label>
+        <input asp-for="duracao_meses" type="number" class="form-control" />
+        <span asp-validation-for="duracao_meses" class="text-danger"></span>
+    </div>
+
+    <div>
+        <label asp-for="percentual_imposto">Percentual de Imposto (%):</label>
+        <input asp-for="percentual_imposto" type="number" step="0.01" class="form-control" />
+        <span asp-validation-for="percentual_imposto" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-3">Adicionar</button>
+</form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
