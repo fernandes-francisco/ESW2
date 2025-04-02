@@ -427,15 +427,15 @@ C:\Users\migue\ESW2\ESW2\obj\Debug\net9.0\refint\ESW2.dll
 C:\Users\migue\ESW2\ESW2\obj\Debug\net9.0\ESW2.pdb
 C:\Users\migue\ESW2\ESW2\obj\Debug\net9.0\ESW2.genruntimeconfig.cache
 C:\Users\migue\ESW2\ESW2\obj\Debug\net9.0\ref\ESW2.dll
+C:\Users\ferre\ESW2\ESW2\bin\Debug\net9.0\ESW2.exe
+C:\Users\ferre\ESW2\ESW2\bin\Debug\net9.0\ESW2.dll
+C:\Users\ferre\ESW2\ESW2\bin\Debug\net9.0\Microsoft.EntityFrameworkCore.dll
+C:\Users\ferre\ESW2\ESW2\bin\Debug\net9.0\Microsoft.EntityFrameworkCore.Abstractions.dll
+C:\Users\ferre\ESW2\ESW2\bin\Debug\net9.0\Microsoft.EntityFrameworkCore.Relational.dll
 C:\Users\ferre\ESW2\ESW2\bin\Debug\net9.0\appsettings.Development.json
 C:\Users\ferre\ESW2\ESW2\bin\Debug\net9.0\appsettings.json
 C:\Users\ferre\ESW2\ESW2\bin\Debug\net9.0\ESW2.staticwebassets.runtime.json
 C:\Users\ferre\ESW2\ESW2\bin\Debug\net9.0\ESW2.staticwebassets.endpoints.json
-C:\Users\ferre\ESW2\ESW2\bin\Debug\net9.0\ESW2.exe
-C:\Users\ferre\ESW2\ESW2\bin\Debug\net9.0\ESW2.deps.json
-C:\Users\ferre\ESW2\ESW2\bin\Debug\net9.0\ESW2.runtimeconfig.json
-C:\Users\ferre\ESW2\ESW2\bin\Debug\net9.0\ESW2.dll
-C:\Users\ferre\ESW2\ESW2\bin\Debug\net9.0\ESW2.pdb
 C:\Users\ferre\ESW2\ESW2\bin\Debug\net9.0\Azure.Core.dll
 C:\Users\ferre\ESW2\ESW2\bin\Debug\net9.0\Azure.Identity.dll
 C:\Users\ferre\ESW2\ESW2\bin\Debug\net9.0\Humanizer.dll
@@ -448,10 +448,7 @@ C:\Users\ferre\ESW2\ESW2\bin\Debug\net9.0\Microsoft.CodeAnalysis.Workspaces.dll
 C:\Users\ferre\ESW2\ESW2\bin\Debug\net9.0\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.dll
 C:\Users\ferre\ESW2\ESW2\bin\Debug\net9.0\Microsoft.CodeAnalysis.Workspaces.MSBuild.dll
 C:\Users\ferre\ESW2\ESW2\bin\Debug\net9.0\Microsoft.Data.SqlClient.dll
-C:\Users\ferre\ESW2\ESW2\bin\Debug\net9.0\Microsoft.EntityFrameworkCore.dll
-C:\Users\ferre\ESW2\ESW2\bin\Debug\net9.0\Microsoft.EntityFrameworkCore.Abstractions.dll
 C:\Users\ferre\ESW2\ESW2\bin\Debug\net9.0\Microsoft.EntityFrameworkCore.Design.dll
-C:\Users\ferre\ESW2\ESW2\bin\Debug\net9.0\Microsoft.EntityFrameworkCore.Relational.dll
 C:\Users\ferre\ESW2\ESW2\bin\Debug\net9.0\Microsoft.EntityFrameworkCore.SqlServer.dll
 C:\Users\ferre\ESW2\ESW2\bin\Debug\net9.0\Microsoft.Extensions.Caching.Abstractions.dll
 C:\Users\ferre\ESW2\ESW2\bin\Debug\net9.0\Microsoft.Extensions.Caching.Memory.dll
@@ -657,5 +654,3 @@ C:\Users\ferre\ESW2\ESW2\obj\Debug\net9.0\ESW2.csproj.Up2Date
 C:\Users\ferre\ESW2\ESW2\obj\Debug\net9.0\ESW2.dll
 C:\Users\ferre\ESW2\ESW2\obj\Debug\net9.0\refint\ESW2.dll
 C:\Users\ferre\ESW2\ESW2\obj\Debug\net9.0\ESW2.pdb
-C:\Users\ferre\ESW2\ESW2\obj\Debug\net9.0\ESW2.genruntimeconfig.cache
-C:\Users\ferre\ESW2\ESW2\obj\Debug\net9.0\ref\ESW2.dll

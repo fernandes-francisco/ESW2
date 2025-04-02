@@ -28,19 +28,11 @@ build_property._RazorSourceGeneratorDebug =
 build_property.EffectiveAnalysisLevelStyle = 9.0
 build_property.EnableCodeStyleSeverity = 
 
-<<<<<<< HEAD
 [C:/Users/ferre/ESW2/ESW2/Views/Account/ForgotPassword.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxGb3Jnb3RQYXNzd29yZC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/ferre/ESW2/ESW2/Views/Account/Login.cshtml]
-=======
-[C:/Users/migue/ESW2/ESW2/Views/Account/ForgotPassword.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxGb3Jnb3RQYXNzd29yZC5jc2h0bWw=
-build_metadata.AdditionalFiles.CssScope = 
-
-[C:/Users/migue/ESW2/ESW2/Views/Account/Login.cshtml]
->>>>>>> 29134f0d7ba54fe05897ccfab16bdde7577a6308
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxMb2dpbi5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
@@ -48,7 +40,6 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxSZWdpc3Rlci5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-<<<<<<< HEAD
 [C:/Users/ferre/ESW2/ESW2/Views/Account/ResetPassword.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxSZXNldFBhc3N3b3JkLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
@@ -66,25 +57,6 @@ build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQXRpdm9GaW5hbmNlaXJvXEluZGV4
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/ferre/ESW2/ESW2/Views/Cliente/Config.cshtml]
-=======
-[C:/Users/migue/ESW2/ESW2/Views/Account/ResetPassword.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxSZXNldFBhc3N3b3JkLmNzaHRtbA==
-build_metadata.AdditionalFiles.CssScope = 
-
-[C:/Users/migue/ESW2/ESW2/Views/Account/UpgradeToAdmin.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxVcGdyYWRlVG9BZG1pbi5jc2h0bWw=
-build_metadata.AdditionalFiles.CssScope = 
-
-[C:/Users/migue/ESW2/ESW2/Views/AtivoFinanceiro/Create.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQXRpdm9GaW5hbmNlaXJvXENyZWF0ZS5jc2h0bWw=
-build_metadata.AdditionalFiles.CssScope = 
-
-[C:/Users/migue/ESW2/ESW2/Views/AtivoFinanceiro/Index.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQXRpdm9GaW5hbmNlaXJvXEluZGV4LmNzaHRtbA==
-build_metadata.AdditionalFiles.CssScope = 
-
-[C:/Users/migue/ESW2/ESW2/Views/Cliente/Config.cshtml]
->>>>>>> 29134f0d7ba54fe05897ccfab16bdde7577a6308
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2xpZW50ZVxDb25maWcuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
