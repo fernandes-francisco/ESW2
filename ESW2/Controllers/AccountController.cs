@@ -128,7 +128,7 @@ namespace ESW2.Controllers
             }
             else
             {
-                ViewBag.ErrorMessage = "Senha de admin incorreta!";
+                ViewBag.ErrorMessage = "Password de admin incorreta!";
             }
 
             return View();
@@ -181,10 +181,10 @@ namespace ESW2.Controllers
             }
 
             // Atualizar a senha (⚠️ aqui não há hashing!)
-            user.password = model.NovaSenha;
+            user.password = model.NovaPassword;
             await _context.SaveChangesAsync();
 
-            TempData["Message"] = "Senha redefinida com sucesso!";
+            TempData["Message"] = "Password redefinida com sucesso!";
             return RedirectToAction("Login");
         }
 

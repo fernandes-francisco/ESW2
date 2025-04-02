@@ -21,6 +21,11 @@ public partial class utilizador
     
     [Column("is_admin")]
     public bool isAdmin { get; set; } = false;
+    
+    [StringLength(255)]
+    public string email { get; set; } = null!; 
+    
+    
 
     [InverseProperty("id_utilizadorNavigation")]
     public virtual ICollection<utilizador_cliente> utilizador_clientes { get; set; } = new List<utilizador_cliente>();
