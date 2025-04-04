@@ -1,12 +1,15 @@
-﻿@model IEnumerable<ESW2.Entities.ativo_financeiro>
-
-@{
+﻿@{
     ViewData["Title"] = "Meus Ativos Financeiros";
 }
 
 <h2>@ViewData["Title"]</h2>
 
-<table class="table table-striped">
+<div>
+    <a asp-controller="AtivoFinanceiro" asp-action="Create" class="btn btn-primary">Adicionar Novo Ativo</a>
+    <a asp-controller="AtivoFinanceiro" asp-action="Manage" class="btn btn-secondary">Gerir Ativos</a>
+</div>
+
+<table class="table table-striped mt-3">
     <thead>
     <tr>
         <th>Data Início</th>

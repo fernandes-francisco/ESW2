@@ -1,16 +1,17 @@
 ﻿@{
-    ViewData["Title"] = "Página do Cliente";
+    ViewData["Title"] = "Painel do Cliente";
 }
 
-<h2>@ViewData["Title"]</h2>
-
-<p>Bem-vindo à página do cliente!</p>
+<h2>Painel do Cliente</h2>
 
 <div>
-    <p>Aqui poderá aceder às funcionalidades específicas para clientes.</p>
+    <p>Bem-vindo ao painel do cliente!</p>
     <ul>
-        <li><a asp-controller="Cliente" asp-action="Perfil">Perfil</a></li>
-        <li><a asp-controller="Cliente" asp-action="Config">Configurações</a></li>
-        <li><a asp-controller="Account" asp-action="Logout">Logout</a></li>
+        <li>
+            <a asp-controller="Account" asp-action="UpgradeToAdmin">Tornar-se Administrador</a>
+        </li>
+        <li>
+            <a asp-controller="AtivoFinanceiro" asp-action="Index">Visualizar Ativos Financeiros</a>
+        </li>
     </ul>
 </div>
