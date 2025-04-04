@@ -3,9 +3,14 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ESW2.Controllers
 {
-    [Authorize] // Apenas utilizadores autenticados podem aceder
+    [Authorize]
     public class ClienteController : Controller
     {
+        public IActionResult Index()
+        {
+            return View();
+        }
+
         public IActionResult Perfil()
         {
             return View();

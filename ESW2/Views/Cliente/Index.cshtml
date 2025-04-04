@@ -1,0 +1,16 @@
+﻿@{
+    ViewData["Title"] = "Página do Cliente";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<p>Bem-vindo à página do cliente!</p>
+
+<div>
+    <p>Aqui poderá aceder às funcionalidades específicas para clientes.</p>
+    <ul>
+        <li><a asp-controller="Cliente" asp-action="Perfil">Perfil</a></li>
+        <li><a asp-controller="Cliente" asp-action="Config">Configurações</a></li>
+        <li><a asp-controller="Account" asp-action="Logout">Logout</a></li>
+    </ul>
+</div>

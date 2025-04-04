@@ -654,3 +654,8 @@ C:\Users\ferre\ESW2\ESW2\obj\Debug\net9.0\ESW2.csproj.Up2Date
 C:\Users\ferre\ESW2\ESW2\obj\Debug\net9.0\ESW2.dll
 C:\Users\ferre\ESW2\ESW2\obj\Debug\net9.0\refint\ESW2.dll
 C:\Users\ferre\ESW2\ESW2\obj\Debug\net9.0\ESW2.pdb
+C:\Users\ferre\ESW2\ESW2\bin\Debug\net9.0\ESW2.deps.json
+C:\Users\ferre\ESW2\ESW2\bin\Debug\net9.0\ESW2.runtimeconfig.json
+C:\Users\ferre\ESW2\ESW2\bin\Debug\net9.0\ESW2.pdb
+C:\Users\ferre\ESW2\ESW2\obj\Debug\net9.0\ESW2.genruntimeconfig.cache
+C:\Users\ferre\ESW2\ESW2\obj\Debug\net9.0\ref\ESW2.dll

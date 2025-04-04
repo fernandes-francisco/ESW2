@@ -11,7 +11,9 @@ namespace ESW2.Entities;
 public partial class utilizador
 {
     [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int id_utilizador { get; set; }
+
 
     [StringLength(100)]
     public string username { get; set; } = null!;

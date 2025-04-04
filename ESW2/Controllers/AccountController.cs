@@ -40,6 +40,7 @@ namespace ESW2.Controllers
                 var claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, user.username),
+                    new Claim(ClaimTypes.Email, user.email ?? string.Empty),
                     new Claim(ClaimTypes.Role, user.isAdmin ? "Admin" : "Cliente")
                 };
 
@@ -48,21 +49,15 @@ namespace ESW2.Controllers
 
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
 
-                if (user.isAdmin)
-                {
-                    ViewBag.SuccessMessage = "Login de administrador realizado com sucesso!";
-                    return RedirectToAction("Dashboard", "Admin");
-                }
-                else
-                {
-                    ViewBag.SuccessMessage = "Login de cliente realizado com sucesso!";
-                    return RedirectToAction("Index", "Home");
-                }
+                TempData["SuccessMessage"] = "Login realizado com sucesso!";
+                // Redirecionar para a página Cliente após o login
+                return RedirectToAction("Index", "Cliente");
             }
 
-            ViewBag.ErrorMessage = "Credenciais inválidas!";
+            TempData["ErrorMessage"] = "Credenciais inválidas!";
             return View();
         }
+
 
         // GET: /Account/Register
         [HttpGet]
@@ -74,7 +69,7 @@ namespace ESW2.Controllers
         // POST: /Account/Register
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(string username, string password)
+        public async Task<IActionResult> Register(string username, string password, string email)
         {
             if (ModelState.IsValid)
             {
@@ -83,19 +78,26 @@ namespace ESW2.Controllers
 
                 if (existingUser != null)
                 {
-                    ViewBag.ErrorMessage = "Este nome de utilizador já está em uso. Escolha outro.";
+                    TempData["ErrorMessage"] = "O nome de utilizador já está em uso. Escolha outro.";
                     return View();
                 }
 
-                var newUser = new utilizador { username = username, password = password, isAdmin = false };
+                var newUser = new utilizador
+                {
+                    username = username,
+                    password = password,
+                    email = email,
+                    isAdmin = false
+                };
+
                 _context.utilizadors.Add(newUser);
                 await _context.SaveChangesAsync();
 
-                ViewBag.SuccessMessage = "Registo realizado com sucesso! Faça login para continuar.";
+                TempData["SuccessMessage"] = "Registo realizado com sucesso! Faça login para continuar.";
                 return RedirectToAction("Login");
             }
 
-            ViewBag.ErrorMessage = "Erro ao tentar registar. Verifique os dados e tente novamente.";
+            TempData["ErrorMessage"] = "Erro ao tentar registar. Verifique os dados e tente novamente.";
             return View();
         }
 
@@ -116,7 +118,7 @@ namespace ESW2.Controllers
 
             if (user == null)
             {
-                ViewBag.ErrorMessage = "Utilizador não encontrado!";
+                TempData["ErrorMessage"] = "Utilizador não encontrado!";
                 return View();
             }
 
@@ -124,11 +126,11 @@ namespace ESW2.Controllers
             {
                 user.isAdmin = true;
                 await _context.SaveChangesAsync();
-                ViewBag.SuccessMessage = "Conta atualizada para Administrador com sucesso!";
+                TempData["SuccessMessage"] = "Conta atualizada para Administrador com sucesso!";
             }
             else
             {
-                ViewBag.ErrorMessage = "Password de admin incorreta!";
+                TempData["ErrorMessage"] = "Password de admin incorreta!";
             }
 
             return View();
@@ -145,7 +147,6 @@ namespace ESW2.Controllers
         [HttpPost]
         public IActionResult ForgotPassword(string email)
         {
-            // Simulação de envio de email
             TempData["Message"] = "Se o email existir, será enviado um link de redefinição.";
             return RedirectToAction("Login");
         }
@@ -170,9 +171,8 @@ namespace ESW2.Controllers
             if (!ModelState.IsValid)
                 return View(model);
 
-            // Procurar utilizador pelo email
             var user = await _context.utilizadors
-                .FirstOrDefaultAsync(u => u.username == model.Email); // Se usares outro campo tipo "email", troca aqui
+                .FirstOrDefaultAsync(u => u.email == model.Email); 
 
             if (user == null)
             {
@@ -180,7 +180,6 @@ namespace ESW2.Controllers
                 return View(model);
             }
 
-            // Atualizar a senha (⚠️ aqui não há hashing!)
             user.password = model.NovaPassword;
             await _context.SaveChangesAsync();
 
