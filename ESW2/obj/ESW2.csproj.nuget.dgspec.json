@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\ferre\\ESW2\\ESW2\\ESW2.csproj": {}
+    "C:\\Users\\tomas\\RiderProjects\\ESW2\\ESW2\\ESW2.csproj": {}
   },
   "projects": {
-    "C:\\Users\\ferre\\ESW2\\ESW2\\ESW2.csproj": {
+    "C:\\Users\\tomas\\RiderProjects\\ESW2\\ESW2\\ESW2.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\ferre\\ESW2\\ESW2\\ESW2.csproj",
+        "projectUniqueName": "C:\\Users\\tomas\\RiderProjects\\ESW2\\ESW2\\ESW2.csproj",
         "projectName": "ESW2",
-        "projectPath": "C:\\Users\\ferre\\ESW2\\ESW2\\ESW2.csproj",
-        "packagesPath": "C:\\Users\\ferre\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\ferre\\ESW2\\ESW2\\obj\\",
+        "projectPath": "C:\\Users\\tomas\\RiderProjects\\ESW2\\ESW2\\ESW2.csproj",
+        "packagesPath": "C:\\Users\\tomas\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\tomas\\RiderProjects\\ESW2\\ESW2\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\ferre\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\tomas\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
@@ -88,7 +88,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.201/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.200/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
