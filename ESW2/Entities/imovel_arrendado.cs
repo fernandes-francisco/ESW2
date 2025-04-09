@@ -1,20 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore;
 
 namespace ESW2.Entities;
 
-[Table("imovel_arrendado")]
 public partial class imovel_arrendado
 {
-    [Key]
     public int id_imovel { get; set; }
 
-    public int id_ativo { get; set; }
-
-    [StringLength(100)]
     public string designacao { get; set; } = null!;
 
     public string localizacao { get; set; } = null!;
@@ -27,7 +19,5 @@ public partial class imovel_arrendado
 
     public double valor_anual_despesas { get; set; }
 
-    [ForeignKey("id_ativo")]
-    [InverseProperty("imovel_arrendados")]
-    public virtual ativo_financeiro id_ativoNavigation { get; set; } = null!;
+    public virtual ICollection<ativo_financeiro> ativo_financeiros { get; set; } = new List<ativo_financeiro>();
 }

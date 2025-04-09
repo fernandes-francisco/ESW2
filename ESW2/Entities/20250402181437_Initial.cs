@@ -42,17 +42,95 @@ namespace ESW2.Entities
                 });
 
             migrationBuilder.CreateTable(
+                name: "fundo_investimento",
+                columns: table => new
+                {
+                    id_fundo = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    nome = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    valor_investido = table.Column<double>(type: "double precision", nullable: false),
+                    taxa_juro_padrao = table.Column<double>(type: "double precision", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("fundo_investimento_pkey", x => x.id_fundo);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "imovel_arrendado",
+                columns: table => new
+                {
+                    id_imovel = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    designacao = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    localizacao = table.Column<string>(type: "text", nullable: false),
+                    valor_imovel = table.Column<double>(type: "double precision", nullable: false),
+                    valor_renda = table.Column<double>(type: "double precision", nullable: false),
+                    valor_mensal_cond = table.Column<double>(type: "double precision", nullable: false),
+                    valor_anual_despesas = table.Column<double>(type: "double precision", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("imovel_arrendado_pkey", x => x.id_imovel);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "utilizador",
                 columns: table => new
                 {
                     id_utilizador = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     username = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    password = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false)
+                    password = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    email = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    is_admin = table.Column<bool>(type: "boolean", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("utilizador_pkey", x => x.id_utilizador);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "deposito_prazo",
+                columns: table => new
+                {
+                    id_deposito = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    id_banco = table.Column<int>(type: "integer", nullable: false),
+                    valor_deposito = table.Column<double>(type: "double precision", nullable: false),
+                    numero_conta_banco = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    titulares = table.Column<string>(type: "text", nullable: false),
+                    taxa_juro_anual = table.Column<double>(type: "double precision", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("deposito_prazo_pkey", x => x.id_deposito);
+                    table.ForeignKey(
+                        name: "deposito_prazo_id_banco_fkey",
+                        column: x => x.id_banco,
+                        principalTable: "banco",
+                        principalColumn: "id_banco",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "taxa_mensal",
+                columns: table => new
+                {
+                    id_taxa = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    id_fundo = table.Column<int>(type: "integer", nullable: false),
+                    mes = table.Column<DateOnly>(type: "date", nullable: false),
+                    taxa_juro = table.Column<double>(type: "double precision", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("taxa_mensal_pkey", x => x.id_taxa);
+                    table.ForeignKey(
+                        name: "taxa_mensal_id_fundo_fkey",
+                        column: x => x.id_fundo,
+                        principalTable: "fundo_investimento",
+                        principalColumn: "id_fundo");
                 });
 
             migrationBuilder.CreateTable(
@@ -85,7 +163,10 @@ namespace ESW2.Entities
                     id_admin = table.Column<int>(type: "integer", nullable: true),
                     data_inicio = table.Column<DateOnly>(type: "date", nullable: false),
                     duracao_meses = table.Column<int>(type: "integer", nullable: false),
-                    percentual_imposto = table.Column<double>(type: "double precision", nullable: false)
+                    percentual_imposto = table.Column<double>(type: "double precision", nullable: false),
+                    id_fundo = table.Column<int>(type: "integer", nullable: true),
+                    id_imovel = table.Column<int>(type: "integer", nullable: true),
+                    id_deposito = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -101,80 +182,24 @@ namespace ESW2.Entities
                         column: x => x.id_cliente,
                         principalTable: "utilizador_cliente",
                         principalColumn: "id_cliente");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "deposito_prazo",
-                columns: table => new
-                {
-                    id_deposito = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    id_ativo = table.Column<int>(type: "integer", nullable: false),
-                    id_banco = table.Column<int>(type: "integer", nullable: false),
-                    valor_deposito = table.Column<double>(type: "double precision", nullable: false),
-                    numero_conta_banco = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
-                    titulares = table.Column<string>(type: "text", nullable: false),
-                    taxa_juro_anual = table.Column<double>(type: "double precision", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("deposito_prazo_pkey", x => x.id_deposito);
                     table.ForeignKey(
-                        name: "deposito_prazo_id_ativo_fkey",
-                        column: x => x.id_ativo,
-                        principalTable: "ativo_financeiro",
-                        principalColumn: "id_ativo");
-                    table.ForeignKey(
-                        name: "deposito_prazo_id_banco_fkey",
-                        column: x => x.id_banco,
-                        principalTable: "banco",
-                        principalColumn: "id_banco",
+                        name: "ativo_financeiro_id_deposito_fkey",
+                        column: x => x.id_deposito,
+                        principalTable: "deposito_prazo",
+                        principalColumn: "id_deposito",
                         onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "fundo_investimento",
-                columns: table => new
-                {
-                    id_fundo = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    id_ativo = table.Column<int>(type: "integer", nullable: false),
-                    nome = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    valor_investido = table.Column<double>(type: "double precision", nullable: false),
-                    taxa_juro_padrao = table.Column<double>(type: "double precision", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("fundo_investimento_pkey", x => x.id_fundo);
                     table.ForeignKey(
-                        name: "fundo_investimento_id_ativo_fkey",
-                        column: x => x.id_ativo,
-                        principalTable: "ativo_financeiro",
-                        principalColumn: "id_ativo");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "imovel_arrendado",
-                columns: table => new
-                {
-                    id_imovel = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    id_ativo = table.Column<int>(type: "integer", nullable: false),
-                    designacao = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    localizacao = table.Column<string>(type: "text", nullable: false),
-                    valor_imovel = table.Column<double>(type: "double precision", nullable: false),
-                    valor_renda = table.Column<double>(type: "double precision", nullable: false),
-                    valor_mensal_cond = table.Column<double>(type: "double precision", nullable: false),
-                    valor_anual_despesas = table.Column<double>(type: "double precision", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("imovel_arrendado_pkey", x => x.id_imovel);
+                        name: "ativo_financeiro_id_fundo_fkey",
+                        column: x => x.id_fundo,
+                        principalTable: "fundo_investimento",
+                        principalColumn: "id_fundo",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "imovel_arrendado_id_ativo_fkey",
-                        column: x => x.id_ativo,
-                        principalTable: "ativo_financeiro",
-                        principalColumn: "id_ativo");
+                        name: "ativo_financeiro_id_imovel_fkey",
+                        column: x => x.id_imovel,
+                        principalTable: "imovel_arrendado",
+                        principalColumn: "id_imovel",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -197,26 +222,6 @@ namespace ESW2.Entities
                         principalColumn: "id_ativo");
                 });
 
-            migrationBuilder.CreateTable(
-                name: "taxa_mensal",
-                columns: table => new
-                {
-                    id_taxa = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    id_fundo = table.Column<int>(type: "integer", nullable: false),
-                    mes = table.Column<DateOnly>(type: "date", nullable: false),
-                    taxa_juro = table.Column<double>(type: "double precision", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("taxa_mensal_pkey", x => x.id_taxa);
-                    table.ForeignKey(
-                        name: "taxa_mensal_id_fundo_fkey",
-                        column: x => x.id_fundo,
-                        principalTable: "fundo_investimento",
-                        principalColumn: "id_fundo");
-                });
-
             migrationBuilder.CreateIndex(
                 name: "IX_ativo_financeiro_id_admin",
                 table: "ativo_financeiro",
@@ -228,30 +233,30 @@ namespace ESW2.Entities
                 column: "id_cliente");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ativo_financeiro_id_deposito",
+                table: "ativo_financeiro",
+                column: "id_deposito");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ativo_financeiro_id_fundo",
+                table: "ativo_financeiro",
+                column: "id_fundo");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ativo_financeiro_id_imovel",
+                table: "ativo_financeiro",
+                column: "id_imovel");
+
+            migrationBuilder.CreateIndex(
                 name: "deposito_prazo_numero_conta_banco_key",
                 table: "deposito_prazo",
                 column: "numero_conta_banco",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_deposito_prazo_id_ativo",
-                table: "deposito_prazo",
-                column: "id_ativo");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_deposito_prazo_id_banco",
                 table: "deposito_prazo",
                 column: "id_banco");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_fundo_investimento_id_ativo",
-                table: "fundo_investimento",
-                column: "id_ativo");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_imovel_arrendado_id_ativo",
-                table: "imovel_arrendado",
-                column: "id_ativo");
 
             migrationBuilder.CreateIndex(
                 name: "IX_pagamento_imposto_id_ativo",
@@ -285,22 +290,10 @@ namespace ESW2.Entities
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "deposito_prazo");
-
-            migrationBuilder.DropTable(
-                name: "imovel_arrendado");
-
-            migrationBuilder.DropTable(
                 name: "pagamento_imposto");
 
             migrationBuilder.DropTable(
                 name: "taxa_mensal");
-
-            migrationBuilder.DropTable(
-                name: "banco");
-
-            migrationBuilder.DropTable(
-                name: "fundo_investimento");
 
             migrationBuilder.DropTable(
                 name: "ativo_financeiro");
@@ -312,7 +305,19 @@ namespace ESW2.Entities
                 name: "utilizador_cliente");
 
             migrationBuilder.DropTable(
+                name: "deposito_prazo");
+
+            migrationBuilder.DropTable(
+                name: "fundo_investimento");
+
+            migrationBuilder.DropTable(
+                name: "imovel_arrendado");
+
+            migrationBuilder.DropTable(
                 name: "utilizador");
+
+            migrationBuilder.DropTable(
+                name: "banco");
         }
     }
 }

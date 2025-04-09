@@ -56,8 +56,16 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQXRpdm9GaW5hbmNlaXJvL0luZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
+[/home/o0001/RiderProjects/ESW2/ESW2/Views/AtivoFinanceiro/Manage.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQXRpdm9GaW5hbmNlaXJvL01hbmFnZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
 [/home/o0001/RiderProjects/ESW2/ESW2/Views/Cliente/Config.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQ2xpZW50ZS9Db25maWcuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/o0001/RiderProjects/ESW2/ESW2/Views/Cliente/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQ2xpZW50ZS9JbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [/home/o0001/RiderProjects/ESW2/ESW2/Views/Cliente/Perfil.cshtml]

@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ESW2.Entities
 {
     [DbContext(typeof(MyDbContext))]
-    [Migration("20250317210504_Initial")]
+    [Migration("20250402181437_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -42,7 +42,7 @@ namespace ESW2.Entities
                     b.HasKey("id_admin")
                         .HasName("administrador_pkey");
 
-                    b.ToTable("administrador");
+                    b.ToTable("administrador", (string)null);
                 });
 
             modelBuilder.Entity("ESW2.Entities.ativo_financeiro", b =>
@@ -65,6 +65,15 @@ namespace ESW2.Entities
                     b.Property<int>("id_cliente")
                         .HasColumnType("integer");
 
+                    b.Property<int?>("id_deposito")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("id_fundo")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("id_imovel")
+                        .HasColumnType("integer");
+
                     b.Property<double>("percentual_imposto")
                         .HasColumnType("double precision");
 
@@ -75,7 +84,13 @@ namespace ESW2.Entities
 
                     b.HasIndex("id_cliente");
 
-                    b.ToTable("ativo_financeiro");
+                    b.HasIndex("id_deposito");
+
+                    b.HasIndex("id_fundo");
+
+                    b.HasIndex("id_imovel");
+
+                    b.ToTable("ativo_financeiro", (string)null);
                 });
 
             modelBuilder.Entity("ESW2.Entities.banco", b =>
@@ -94,7 +109,7 @@ namespace ESW2.Entities
                     b.HasKey("id_banco")
                         .HasName("banco_pkey");
 
-                    b.ToTable("banco");
+                    b.ToTable("banco", (string)null);
                 });
 
             modelBuilder.Entity("ESW2.Entities.deposito_prazo", b =>
@@ -104,9 +119,6 @@ namespace ESW2.Entities
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("id_deposito"));
-
-                    b.Property<int>("id_ativo")
-                        .HasColumnType("integer");
 
                     b.Property<int>("id_banco")
                         .HasColumnType("integer");
@@ -129,14 +141,12 @@ namespace ESW2.Entities
                     b.HasKey("id_deposito")
                         .HasName("deposito_prazo_pkey");
 
-                    b.HasIndex("id_ativo");
-
                     b.HasIndex("id_banco");
 
                     b.HasIndex(new[] { "numero_conta_banco" }, "deposito_prazo_numero_conta_banco_key")
                         .IsUnique();
 
-                    b.ToTable("deposito_prazo");
+                    b.ToTable("deposito_prazo", (string)null);
                 });
 
             modelBuilder.Entity("ESW2.Entities.fundo_investimento", b =>
@@ -146,9 +156,6 @@ namespace ESW2.Entities
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("id_fundo"));
-
-                    b.Property<int>("id_ativo")
-                        .HasColumnType("integer");
 
                     b.Property<string>("nome")
                         .IsRequired()
@@ -164,9 +171,7 @@ namespace ESW2.Entities
                     b.HasKey("id_fundo")
                         .HasName("fundo_investimento_pkey");
 
-                    b.HasIndex("id_ativo");
-
-                    b.ToTable("fundo_investimento");
+                    b.ToTable("fundo_investimento", (string)null);
                 });
 
             modelBuilder.Entity("ESW2.Entities.imovel_arrendado", b =>
@@ -181,9 +186,6 @@ namespace ESW2.Entities
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
-
-                    b.Property<int>("id_ativo")
-                        .HasColumnType("integer");
 
                     b.Property<string>("localizacao")
                         .IsRequired()
@@ -204,9 +206,7 @@ namespace ESW2.Entities
                     b.HasKey("id_imovel")
                         .HasName("imovel_arrendado_pkey");
 
-                    b.HasIndex("id_ativo");
-
-                    b.ToTable("imovel_arrendado");
+                    b.ToTable("imovel_arrendado", (string)null);
                 });
 
             modelBuilder.Entity("ESW2.Entities.pagamento_imposto", b =>
@@ -231,7 +231,7 @@ namespace ESW2.Entities
 
                     b.HasIndex("id_ativo");
 
-                    b.ToTable("pagamento_imposto");
+                    b.ToTable("pagamento_imposto", (string)null);
                 });
 
             modelBuilder.Entity("ESW2.Entities.taxa_mensal", b =>
@@ -256,7 +256,7 @@ namespace ESW2.Entities
 
                     b.HasIndex("id_fundo");
 
-                    b.ToTable("taxa_mensal");
+                    b.ToTable("taxa_mensal", (string)null);
                 });
 
             modelBuilder.Entity("ESW2.Entities.utilizador", b =>
@@ -266,6 +266,13 @@ namespace ESW2.Entities
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("id_utilizador"));
+
+                    b.Property<string>("email")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<bool?>("is_admin")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("password")
                         .IsRequired()
@@ -283,7 +290,7 @@ namespace ESW2.Entities
                     b.HasIndex(new[] { "username" }, "utilizador_username_key")
                         .IsUnique();
 
-                    b.ToTable("utilizador");
+                    b.ToTable("utilizador", (string)null);
                 });
 
             modelBuilder.Entity("ESW2.Entities.utilizador_cliente", b =>
@@ -312,7 +319,7 @@ namespace ESW2.Entities
                     b.HasIndex(new[] { "nif" }, "utilizador_cliente_nif_key")
                         .IsUnique();
 
-                    b.ToTable("utilizador_cliente");
+                    b.ToTable("utilizador_cliente", (string)null);
                 });
 
             modelBuilder.Entity("ESW2.Entities.ativo_financeiro", b =>
@@ -329,19 +336,37 @@ namespace ESW2.Entities
                         .IsRequired()
                         .HasConstraintName("ativo_financeiro_id_cliente_fkey");
 
+                    b.HasOne("ESW2.Entities.deposito_prazo", "id_depositoNavigation")
+                        .WithMany("ativo_financeiros")
+                        .HasForeignKey("id_deposito")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasConstraintName("ativo_financeiro_id_deposito_fkey");
+
+                    b.HasOne("ESW2.Entities.fundo_investimento", "id_fundoNavigation")
+                        .WithMany("ativo_financeiros")
+                        .HasForeignKey("id_fundo")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasConstraintName("ativo_financeiro_id_fundo_fkey");
+
+                    b.HasOne("ESW2.Entities.imovel_arrendado", "id_imovelNavigation")
+                        .WithMany("ativo_financeiros")
+                        .HasForeignKey("id_imovel")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasConstraintName("ativo_financeiro_id_imovel_fkey");
+
                     b.Navigation("id_adminNavigation");
 
                     b.Navigation("id_clienteNavigation");
+
+                    b.Navigation("id_depositoNavigation");
+
+                    b.Navigation("id_fundoNavigation");
+
+                    b.Navigation("id_imovelNavigation");
                 });
 
             modelBuilder.Entity("ESW2.Entities.deposito_prazo", b =>
                 {
-                    b.HasOne("ESW2.Entities.ativo_financeiro", "id_ativoNavigation")
-                        .WithMany("deposito_prazos")
-                        .HasForeignKey("id_ativo")
-                        .IsRequired()
-                        .HasConstraintName("deposito_prazo_id_ativo_fkey");
-
                     b.HasOne("ESW2.Entities.banco", "id_bancoNavigation")
                         .WithMany("deposito_prazos")
                         .HasForeignKey("id_banco")
@@ -349,31 +374,7 @@ namespace ESW2.Entities
                         .IsRequired()
                         .HasConstraintName("deposito_prazo_id_banco_fkey");
 
-                    b.Navigation("id_ativoNavigation");
-
                     b.Navigation("id_bancoNavigation");
-                });
-
-            modelBuilder.Entity("ESW2.Entities.fundo_investimento", b =>
-                {
-                    b.HasOne("ESW2.Entities.ativo_financeiro", "id_ativoNavigation")
-                        .WithMany("fundo_investimentos")
-                        .HasForeignKey("id_ativo")
-                        .IsRequired()
-                        .HasConstraintName("fundo_investimento_id_ativo_fkey");
-
-                    b.Navigation("id_ativoNavigation");
-                });
-
-            modelBuilder.Entity("ESW2.Entities.imovel_arrendado", b =>
-                {
-                    b.HasOne("ESW2.Entities.ativo_financeiro", "id_ativoNavigation")
-                        .WithMany("imovel_arrendados")
-                        .HasForeignKey("id_ativo")
-                        .IsRequired()
-                        .HasConstraintName("imovel_arrendado_id_ativo_fkey");
-
-                    b.Navigation("id_ativoNavigation");
                 });
 
             modelBuilder.Entity("ESW2.Entities.pagamento_imposto", b =>
@@ -416,12 +417,6 @@ namespace ESW2.Entities
 
             modelBuilder.Entity("ESW2.Entities.ativo_financeiro", b =>
                 {
-                    b.Navigation("deposito_prazos");
-
-                    b.Navigation("fundo_investimentos");
-
-                    b.Navigation("imovel_arrendados");
-
                     b.Navigation("pagamento_impostos");
                 });
 
@@ -430,9 +425,21 @@ namespace ESW2.Entities
                     b.Navigation("deposito_prazos");
                 });
 
+            modelBuilder.Entity("ESW2.Entities.deposito_prazo", b =>
+                {
+                    b.Navigation("ativo_financeiros");
+                });
+
             modelBuilder.Entity("ESW2.Entities.fundo_investimento", b =>
                 {
+                    b.Navigation("ativo_financeiros");
+
                     b.Navigation("taxa_mensals");
+                });
+
+            modelBuilder.Entity("ESW2.Entities.imovel_arrendado", b =>
+                {
+                    b.Navigation("ativo_financeiros");
                 });
 
             modelBuilder.Entity("ESW2.Entities.utilizador", b =>

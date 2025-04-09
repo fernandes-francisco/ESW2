@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore;
 
 namespace ESW2.Entities;
 
-[Table("ativo_financeiro")]
 public partial class ativo_financeiro
 {
-    [Key]
     public int id_ativo { get; set; }
 
     public int id_cliente { get; set; }
@@ -22,23 +18,24 @@ public partial class ativo_financeiro
 
     public double percentual_imposto { get; set; }
 
-    [InverseProperty("id_ativoNavigation")]
-    public virtual ICollection<deposito_prazo> deposito_prazos { get; set; } = new List<deposito_prazo>();
+    public int? id_fundo { get; set; }
 
-    [InverseProperty("id_ativoNavigation")]
-    public virtual ICollection<fundo_investimento> fundo_investimentos { get; set; } = new List<fundo_investimento>();
+    public int? id_imovel { get; set; }
 
-    [ForeignKey("id_admin")]
-    [InverseProperty("ativo_financeiros")]
+    public int? id_deposito { get; set; }
+    [Required]
+    // Ensure this uses the C# enum you just created
+    public estado_ativo estado { get; set; } = estado_ativo.Ativo; 
+
     public virtual administrador? id_adminNavigation { get; set; }
 
-    [ForeignKey("id_cliente")]
-    [InverseProperty("ativo_financeiros")]
     public virtual utilizador_cliente id_clienteNavigation { get; set; } = null!;
 
-    [InverseProperty("id_ativoNavigation")]
-    public virtual ICollection<imovel_arrendado> imovel_arrendados { get; set; } = new List<imovel_arrendado>();
+    public virtual deposito_prazo? id_depositoNavigation { get; set; }
 
-    [InverseProperty("id_ativoNavigation")]
+    public virtual fundo_investimento? id_fundoNavigation { get; set; }
+
+    public virtual imovel_arrendado? id_imovelNavigation { get; set; }
+
     public virtual ICollection<pagamento_imposto> pagamento_impostos { get; set; } = new List<pagamento_imposto>();
 }

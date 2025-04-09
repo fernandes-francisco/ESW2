@@ -1,0 +1,32 @@
+@model IEnumerable<ESW2.Entities.ativo_financeiro>
+
+@{
+    ViewData["Title"] = "Gerir Ativos Financeiros";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<table class="table table-striped mt-3">
+    <thead>
+    <tr>
+        <th>Data de Início</th>
+        <th>Duração (meses)</th>
+        <th>Percentual de Imposto (%)</th>
+        <th>Ações</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var ativo in Model)
+    {
+        <tr>
+            <td>@ativo.data_inicio.ToShortDateString()</td>
+            <td>@ativo.duracao_meses</td>
+            <td>@ativo.percentual_imposto</td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@ativo.id_ativo" class="btn btn-warning btn-sm">Editar</a>
+                <a asp-action="Delete" asp-route-id="@ativo.id_ativo" class="btn btn-danger btn-sm">Eliminar</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
