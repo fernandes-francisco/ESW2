@@ -52,6 +52,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQXRpdm9GaW5hbmNlaXJvL0NyZWF0ZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
+[/home/o0001/RiderProjects/ESW2/ESW2/Views/AtivoFinanceiro/Delete.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQXRpdm9GaW5hbmNlaXJvL0RlbGV0ZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
 [/home/o0001/RiderProjects/ESW2/ESW2/Views/AtivoFinanceiro/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQXRpdm9GaW5hbmNlaXJvL0luZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 

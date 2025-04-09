@@ -1,29 +1,165 @@
 ﻿@model ESW2.Entities.ativo_financeiro
+@using ESW2.Entities
 
 @{
     ViewData["Title"] = "Adicionar Ativo Financeiro";
+    var tipoAtivo = ViewBag.TipoAtivo ?? "Deposito";
+    var bancos = ViewBag.Bancos as List<banco>;
 }
 
 <h2>@ViewData["Title"]</h2>
 
+@if (ViewBag.SuccessMessage != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <strong>Sucesso!</strong> @ViewBag.SuccessMessage
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<div class="mb-4">
+    <div class="btn-group w-100" role="group">
+        <a asp-action="Create" asp-route-tipoAtivo="Deposito" class="btn @(tipoAtivo == "Deposito" ? "btn-primary" : "btn-outline-primary")">Depósito a Prazo</a>
+        <a asp-action="Create" asp-route-tipoAtivo="Fundo" class="btn @(tipoAtivo == "Fundo" ? "btn-primary" : "btn-outline-primary")">Fundo de Investimento</a>
+        <a asp-action="Create" asp-route-tipoAtivo="Imovel" class="btn @(tipoAtivo == "Imovel" ? "btn-primary" : "btn-outline-primary")">Imóvel Arrendado</a>
+    </div>
+</div>
+
+<div class="mb-3">
+    <a asp-controller="Cliente" asp-action="Index" class="btn btn-secondary">Voltar para página principal</a>
+</div>
+
 <form asp-action="Create" method="post">
-    <div>
-        <label asp-for="data_inicio">Data de Início:</label>
+    <input type="hidden" name="tipoAtivo" value="@tipoAtivo" />
+    
+    <div class="mb-3">
+        <label asp-for="data_inicio" class="form-label">Data de Início:</label>
         <input asp-for="data_inicio" type="date" class="form-control" />
         <span asp-validation-for="data_inicio" class="text-danger"></span>
     </div>
 
-    <div>
-        <label asp-for="duracao_meses">Duração (meses):</label>
+    <div class="mb-3">
+        <label asp-for="duracao_meses" class="form-label">Duração (meses):</label>
         <input asp-for="duracao_meses" type="number" class="form-control" />
         <span asp-validation-for="duracao_meses" class="text-danger"></span>
     </div>
 
-    <div>
-        <label asp-for="percentual_imposto">Percentual de Imposto (%):</label>
+    <div class="mb-3">
+        <label asp-for="percentual_imposto" class="form-label">Percentual de Imposto (%):</label>
         <input asp-for="percentual_imposto" type="number" step="0.01" class="form-control" />
         <span asp-validation-for="percentual_imposto" class="text-danger"></span>
     </div>
+
+    @if (tipoAtivo == "Deposito")
+    {
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Informações do Depósito a Prazo</h5>
+            </div>
+            <div class="card-body">
+                @if (bancos != null && bancos.Any())
+                {
+                    <div class="mb-3">
+                        <label class="form-label">Banco:</label>
+                        <select id="id_banco" name="id_banco" class="form-select">
+                            <option value="">-- Selecione um Banco --</option>
+                            @foreach (var banco in bancos)
+                            {
+                                <option value="@banco.id_banco">@banco.nome_banco</option>
+                            }
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Número da Conta:</label>
+                        <input type="text" id="numero_conta" name="numero_conta" class="form-control" />
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Titulares:</label>
+                        <input type="text" id="titulares" name="titulares" class="form-control" />
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Valor do Depósito:</label>
+                        <input type="number" id="valor_deposito" name="valor_deposito" step="0.01" class="form-control" />
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Taxa de Juro Anual (%):</label>
+                        <input type="number" id="taxa_juro_anual" name="taxa_juro_anual" step="0.01" class="form-control" />
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-info">
+                        Não existem bancos cadastrados. Adicione um banco primeiro.
+                    </div>
+                }
+            </div>
+        </div>
+    }
+    else if (tipoAtivo == "Fundo")
+    {
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Informações do Fundo de Investimento</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="form-label">Nome do Fundo:</label>
+                    <input type="text" id="nome_fundo" name="nome_fundo_novo" class="form-control" required />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Valor Investido:</label>
+                    <input type="number" id="valor_investido" name="valor_investido_novo" step="0.01" class="form-control" required />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Taxa de Juro Padrão (%):</label>
+                    <input type="number" id="taxa_juro_padrao" name="taxa_juro_padrao_novo" step="0.01" class="form-control" required />
+                </div>
+            </div>
+        </div>
+    }
+    else if (tipoAtivo == "Imovel")
+    {
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Informações do Imóvel Arrendado</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="form-label">Designação:</label>
+                    <input type="text" id="designacao" name="designacao" class="form-control" />
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">Localização:</label>
+                    <input type="text" id="localizacao" name="localizacao" class="form-control" />
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">Valor do Imóvel:</label>
+                    <input type="number" id="valor_imovel" name="valor_imovel" step="0.01" class="form-control" />
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">Valor da Renda:</label>
+                    <input type="number" id="valor_renda" name="valor_renda" step="0.01" class="form-control" />
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">Valor Mensal do Condomínio:</label>
+                    <input type="number" id="valor_mensal_cond" name="valor_mensal_cond" step="0.01" class="form-control" />
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">Valor Anual de Despesas:</label>
+                    <input type="number" id="valor_anual_despesas" name="valor_anual_despesas" step="0.01" class="form-control" />
+                </div>
+            </div>
+        </div>
+    }
 
     <button type="submit" class="btn btn-primary mt-3">Adicionar</button>
 </form>
