@@ -5,20 +5,24 @@
 <h2>Registar</h2>
 
 <form method="post" asp-controller="Account" asp-action="Register">
-    <p>Já tem conta? <a asp-controller="Account" asp-action="Register">Efetue aqui o Login</a></p>
+    <p>Já tem conta? <a asp-controller="Account" asp-action="Login">Efetue aqui o Login</a></p>
 
     <div>
-        <label>Id</label>
-        <input type="text" name="id"/>
-    </div>
-    <div>
         <label>Username</label>
-        <input type="text" name="username" required/>
+        <input type="text" name="username" required />
     </div>
     <div>
         <label>Password</label>
-        <input type="password" name="password" required/>
+        <input type="password" name="password" required />
+    </div>
+    <div>
+        <label>Email</label>
+        <input type="email" name="email" required />
     </div>
     <button type="submit">Registar</button>
-    
+
+    @if (!string.IsNullOrEmpty(ViewData["ErrorMessage"] as string))
+    {
+        <div style="color:red;">@ViewData["ErrorMessage"]</div>
+    }
 </form>
