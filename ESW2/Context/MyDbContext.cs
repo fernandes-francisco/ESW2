@@ -28,15 +28,15 @@ namespace ESW2.Context // Ensure this namespace is correct
 
 
         // REMOVE or comment out OnConfiguring if using Dependency Injection.
-        /*
+        
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=Eng_Soft;Username=postgres;Password=postgres");
+                optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=Eng_Soft;Username=postgres;Password=1234564789");
             }
         }
-        */
+        
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
