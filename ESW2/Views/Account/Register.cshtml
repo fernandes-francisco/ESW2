@@ -1,28 +1,52 @@
 ﻿@{
     ViewData["Title"] = "Registo";
+    ViewData["HideNavbar"] = true;
 }
 
-<h2>Registar</h2>
-
-<form method="post" asp-controller="Account" asp-action="Register">
-    <p>Já tem uma conta? <a asp-controller="Account" asp-action="Login">Iniciar sessão</a></p>
-
-    <div>
-        <label>Username</label>
-        <input type="text" name="username" required />
-    </div>
-    <div>
-        <label>Palavra-passe</label>
-        <input type="password" name="password" required />
-    </div>
-    <div>
-        <label>Email</label>
-        <input type="email" name="email" required />
-    </div>
-    <button type="submit">Registar</button>
-
-    @if (!string.IsNullOrEmpty(ViewData["ErrorMessage"] as string))
-    {
-        <div style="color:red;">@ViewData["ErrorMessage"]</div>
+<style>
+    html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        background-color: white;
+        overflow: hidden;
     }
-</form>
+</style>
+
+<div class="d-flex justify-content-center align-items-center" style="height: 100vh;">
+    <div class="card shadow-lg rounded" style="width: 100%; max-width: 400px;">
+        <div class="card-header bg-primary text-white text-center">
+            <h3 class="mb-0">Criar Conta</h3>
+        </div>
+        <div class="card-body">
+
+            <form method="post" asp-controller="Account" asp-action="Register">
+                <div class="mb-3">
+                    <label class="form-label">Nome de utilizador</label>
+                    <input type="text" name="username" class="form-control" required />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Email</label>
+                    <input type="email" name="email" class="form-control" required />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Palavra-passe</label>
+                    <input type="password" name="password" class="form-control" required />
+                </div>
+                
+                <button type="submit" class="btn btn-primary w-100">Registar</button>
+            </form>
+
+            @if (!string.IsNullOrEmpty(ViewData["ErrorMessage"] as string))
+            {
+                <div class="alert alert-danger mt-3 text-center">@ViewData["ErrorMessage"]</div>
+            }
+
+            <div class="mt-3 text-center">
+                <span>Já tem conta?</span>
+                <a asp-controller="Account" asp-action="Login">Efetue aqui o Login</a>
+            </div>
+
+        </div>
+    </div>
+</div>

@@ -1,87 +1,88 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - ESW2</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/>
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
-    <link rel="stylesheet" href="~/ESW2.styles.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/ESW2.styles.css" asp-append-version="true" />
 </head>
 <body>
-<header>
-    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-        <div class="container-fluid">
-            <a class="navbar-brand" asp-area="" asp-controller="Cliente" asp-action="Index">ESW2</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                    aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
+@if (ViewData["HideNavbar"] == null || !(bool)ViewData["HideNavbar"])
+{
+    <!-- TOPO COM BOTÃO HAMBURGER -->
+    <header class="bg-white border-bottom shadow-sm p-3">
+        <div class="d-flex justify-content-between align-items-center">
+            <button class="btn btn-outline-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#sideMenu" aria-controls="sideMenu">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-list" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M2.5 12.5a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1h-10a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1h-10a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1h-10a.5.5 0 0 1-.5-.5z"/>
+                </svg>
             </button>
-            <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                <ul class="navbar-nav flex-grow-1">
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Cliente" asp-action="Index">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="AtivoFinanceiro" asp-action="Index">Meus Ativos</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="AtivoFinanceiro" asp-action="Create">Adicionar Ativo</a>
-                    </li>
-                </ul>
-
-                <ul class="navbar-nav">
-                    @if (User.Identity.IsAuthenticated)
-                    {
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle text-dark" href="#" id="clienteMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Menu Cliente
-                            </a>
-                            <ul class="dropdown-menu" aria-labelledby="clienteMenu">
-                                <li><a class="dropdown-item" asp-controller="Cliente" asp-action="Perfil">Perfil</a></li>
-                                <li><a class="dropdown-item" asp-controller="Cliente" asp-action="Config">Configurações</a></li>
-
-                                @if (!User.IsInRole("Admin"))
-                                {
-                                    <li><hr class="dropdown-divider"></li>
-                                    <li><a class="dropdown-item text-danger" asp-controller="Account" asp-action="UpgradeToAdmin">Tornar-se Administrador</a></li>
-                                }
-                            </ul>
-                        </li>
-
-                        <li class="nav-item">
-                            <span class="nav-link text-dark">Bem-vindo, @User.Identity.Name!</span>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-controller="Account" asp-action="Logout">Sair</a>
-                        </li>
-                    }
-                    else
-                    {
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-controller="Account" asp-action="Login">Entrar</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-controller="Account" asp-action="Register">Registar</a>
-                        </li>
-                    }
-                </ul>
-            </div>
         </div>
-    </nav>
-</header>
+    </header>
 
-<div class="container">
+    <!-- MENU LATERAL (OFFCANVAS) -->
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="sideMenu" aria-labelledby="sideMenuLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="sideMenuLabel">Menu</h5>
+            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Fechar"></button>
+        </div>
+        <div class="offcanvas-body">
+            <ul class="nav flex-column">
+                <li class="nav-item mb-2">
+                    <a class="nav-link" asp-controller="Cliente" asp-action="Index">Painel do Cliente</a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a class="nav-link" asp-controller="AtivoFinanceiro" asp-action="Index">Os Meus Ativos</a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a class="nav-link" asp-controller="AtivoFinanceiro" asp-action="Create">Adicionar Ativo</a>
+                </li>
+
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <li class="nav-item mb-2">
+                        <a class="nav-link" asp-controller="Cliente" asp-action="Perfil">Perfil</a>
+                    </li>
+                    <li class="nav-item mb-2">
+                        <a class="nav-link" asp-controller="Cliente" asp-action="Config">Configurações</a>
+                    </li>
+                    @if (!User.IsInRole("Admin"))
+                    {
+                        <li class="nav-item mb-2">
+                            <a class="nav-link text-success" asp-controller="Account" asp-action="UpgradeToAdmin">Tornar-se Admin</a>
+                        </li>
+                    }
+                    <li class="nav-item mt-4">
+                        <form method="post" asp-controller="Account" asp-action="Logout">
+                            <button type="submit" class="btn btn-outline-danger w-100">Terminar Sessão</button>
+                        </form>
+                    </li>
+                }
+                else
+                {
+                    <li class="nav-item mb-2">
+                        <a class="nav-link" asp-controller="Account" asp-action="Login">Login</a>
+                    </li>
+                    <li class="nav-item mb-2">
+                        <a class="nav-link" asp-controller="Account" asp-action="Register">Registar</a>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+}
+
+<!-- CONTEÚDO PRINCIPAL -->
+<div class="container mt-4">
     <main role="main" class="pb-3">
         @RenderBody()
     </main>
 </div>
 
-<footer class="border-top footer text-muted">
-    <div class="container">
-        © 2025 - ESW2
-    </div>
-</footer>
+
+<!-- SCRIPTS -->
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <script src="~/js/site.js" asp-append-version="true"></script>
