@@ -28,9 +28,6 @@
                     <li class="nav-item">
                         <a class="nav-link text-dark" asp-area="" asp-controller="AtivoFinanceiro" asp-action="Create">Adicionar Ativo</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                    </li>
                 </ul>
 
                 <ul class="navbar-nav">
@@ -47,7 +44,7 @@
                                 @if (!User.IsInRole("Admin"))
                                 {
                                     <li><hr class="dropdown-divider"></li>
-                                    <li><a class="dropdown-item text-danger" asp-controller="Account" asp-action="UpgradeToAdmin">Tornar-se Admin</a></li>
+                                    <li><a class="dropdown-item text-danger" asp-controller="Account" asp-action="UpgradeToAdmin">Tornar-se Administrador</a></li>
                                 }
                             </ul>
                         </li>
@@ -56,13 +53,13 @@
                             <span class="nav-link text-dark">Bem-vindo, @User.Identity.Name!</span>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-controller="Account" asp-action="Logout">Logout</a>
+                            <a class="nav-link text-dark" asp-controller="Account" asp-action="Logout">Sair</a>
                         </li>
                     }
                     else
                     {
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-controller="Account" asp-action="Login">Login</a>
+                            <a class="nav-link text-dark" asp-controller="Account" asp-action="Login">Entrar</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-controller="Account" asp-action="Register">Registar</a>
@@ -82,7 +79,7 @@
 
 <footer class="border-top footer text-muted">
     <div class="container">
-        &copy; 2025 - ESW2 - <a asp-controller="Home" asp-action="Privacy">Privacy</a>
+        © 2025 - ESW2
     </div>
 </footer>
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
@@ -91,4 +88,3 @@
 @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
-    

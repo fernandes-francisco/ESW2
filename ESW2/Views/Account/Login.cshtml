@@ -2,7 +2,7 @@
     ViewData["Title"] = "Login";
 }
 
-<h2>Login</h2>
+<h2>Inicie sessão na sua conta</h2>
 
 @if (TempData["ErrorMessage"] != null)
 {
@@ -14,18 +14,18 @@
 }
 
 <form method="post" asp-controller="Account" asp-action="Login">
-    <p>Não tem uma conta? <a asp-controller="Account" asp-action="Register">Registe-se aqui</a></p>
+    <p>Não tem uma conta? <a asp-controller="Account" asp-action="Register">Registar</a></p>
 
     <div>
         <label>Username</label>
         <input type="text" name="username" required />
     </div>
     <div>
-        <label>Password</label>
+        <label>Palavra-passe</label>
         <input type="password" name="password" required />
     </div>
 
     <button type="submit">Entrar</button>
     <br/>
-    <a asp-action="ForgotPassword" asp-controller="Account">Esqueceu-se da senha?</a>
+    <a asp-action="ForgotPassword" asp-controller="Account">Esqueceu-se da sua palavra-passe?</a>
 </form>

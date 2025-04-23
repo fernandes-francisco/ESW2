@@ -1,13 +1,13 @@
 @model ESW2.Entities.ativo_financeiro
 
 @{
-    ViewData["Title"] = "Eliminar Ativo Financeiro";
+    ViewData["Title"] = "Apagar Ativo Financeiro";
 }
 
 <h2>@ViewData["Title"]</h2>
 
 <div class="alert alert-warning" role="alert">
-    <h4>Tem certeza que deseja eliminar este ativo financeiro?</h4>
+    <h4>Tem certeza que deseja apagar este ativo financeiro?</h4>
     <p>Esta ação não pode ser desfeita.</p>
 </div>
 
@@ -53,7 +53,7 @@
 
 <form asp-action="Delete" method="post">
     <input type="hidden" asp-for="id_ativo" />
-    <button type="submit" class="btn btn-danger">Eliminar</button>
+    <button type="submit" class="btn btn-danger">Apagar</button>
     <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
 </form>
 

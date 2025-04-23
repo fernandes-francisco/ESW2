@@ -1,11 +1,37 @@
-﻿@{
+﻿@model IEnumerable<ESW2.Entities.ativo_financeiro>
+
+@{
     ViewData["Title"] = "Os meus Ativos Financeiros";
 }
 
 <h2>@ViewData["Title"]</h2>
 
-<div>
-    <a asp-controller="AtivoFinanceiro" asp-action="Create" class="btn btn-primary">Adicionar Novo Ativo</a>
+@if (ViewBag.SuccessMessage != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <strong>Sucesso!</strong> @ViewBag.SuccessMessage
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (ViewBag.ErrorMessage != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <strong>Erro!</strong> @ViewBag.ErrorMessage
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (ViewBag.InfoMessage != null)
+{
+    <div class="alert alert-info alert-dismissible fade show" role="alert">
+        <strong>Info!</strong> @ViewBag.InfoMessage
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<div class="mt-3">
+    <a asp-controller="AtivoFinanceiro" asp-action="Create" class="btn btn-primary">Inserir Novo Ativo</a>
 </div>
 
 <table class="table table-striped mt-3">
@@ -25,8 +51,8 @@
             <td>@ativo.duracao_meses</td>
             <td>@ativo.percentual_imposto</td>
             <td>
-                <a asp-controller="AtivoFinanceiro" asp-action="Edit" asp-route-id="@ativo.id_ativo" class="btn btn-sm btn-primary">Editar</a>
-                <a asp-controller="AtivoFinanceiro" asp-action="Delete" asp-route-id="@ativo.id_ativo" class="btn btn-sm btn-danger" onclick="return confirm('Tem certeza que deseja excluir este ativo?');">Excluir</a>
+                <a asp-controller="AtivoFinanceiro" asp-action="Edit" asp-route-id="@ativo.id_ativo" class="btn btn-sm btn-primary">Atualizar</a>
+                <a asp-controller="AtivoFinanceiro" asp-action="Delete" asp-route-id="@ativo.id_ativo" class="btn btn-sm btn-danger">Apagar</a>
             </td>
         </tr>
     }

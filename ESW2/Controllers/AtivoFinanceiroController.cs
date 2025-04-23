@@ -166,7 +166,7 @@ namespace ESW2.Controllers
             var clienteId = await GetCurrentClienteId();
             if (clienteId == null)
             {
-                ModelState.AddModelError("", "Não foi possível identificar o cliente. Faça login novamente.");
+                ModelState.AddModelError("", "Não foi possível identificar o cliente. Inicie sessão novamente.");
                 await ReloadCreateViewData(tipoAtivo);
                 return View(ativo);
             }
@@ -203,7 +203,7 @@ namespace ESW2.Controllers
                             _context.deposito_prazos.Add(novoDeposito);
                             await _context.SaveChangesAsync();
                             ativo.id_deposito = novoDeposito.id_deposito;
-                            Console.WriteLine($"Novo Deposito criado com ID: {novoDeposito.id_deposito}. Ativo FK set to: {ativo.id_deposito}");
+                            Console.WriteLine($"Novo Depósito criado com ID: {novoDeposito.id_deposito}. Ativo FK set to: {ativo.id_deposito}");
                         }
                     }
                     else if (ativo.id_deposito.HasValue && !await _context.deposito_prazos.AnyAsync(d => d.id_deposito == ativo.id_deposito.Value))
@@ -296,7 +296,7 @@ namespace ESW2.Controllers
                     await _context.SaveChangesAsync();
 
                     Console.WriteLine($"Ativo Financeiro salvo com ID: {ativo.id_ativo}");
-                    TempData["SuccessMessage"] = $"Ativo financeiro ({tipoAtivo}) criado com sucesso!";
+                    TempData["SuccessMessage"] = $"Ativo financeiro ({tipoAtivo}) inserido com sucesso!";
                     return RedirectToAction("Create", new { tipoAtivo = tipoAtivo });
                 }
                 catch (DbUpdateException ex)
@@ -356,7 +356,7 @@ namespace ESW2.Controllers
                 .FirstOrDefaultAsync(a => a.id_ativo == id);
 
             if (ativo_financeiro == null) return NotFound($"Ativo financeiro com ID {id} não encontrado.");
-            if (ativo_financeiro.id_cliente != clienteId.Value) return Unauthorized("Não tem permissão para editar este ativo.");
+            if (ativo_financeiro.id_cliente != clienteId.Value) return Unauthorized("Não tem permissão para atualizar este ativo.");
 
             return View(ativo_financeiro);
         }
@@ -375,8 +375,8 @@ namespace ESW2.Controllers
                 .AsNoTracking()
                 .FirstOrDefaultAsync(a => a.id_ativo == id);
 
-            if (originalAsset == null) return NotFound($"Ativo financeiro com ID {id} não encontrado para edição.");
-            if (originalAsset.id_cliente != clienteId.Value) return Unauthorized("Não tem permissão para editar este ativo.");
+            if (originalAsset == null) return NotFound($"Ativo financeiro com ID {id} não encontrado para atualização.");
+            if (originalAsset.id_cliente != clienteId.Value) return Unauthorized("Não tem permissão para atualizar este ativo.");
 
             ativoFromForm.id_cliente = originalAsset.id_cliente;
             ativoFromForm.id_admin = originalAsset.id_admin;
@@ -398,7 +398,7 @@ namespace ESW2.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ativo_financeiroExists(ativoFromForm.id_ativo)) return NotFound("Ativo foi eliminado enquanto editava.");
+                    if (!ativo_financeiroExists(ativoFromForm.id_ativo)) return NotFound("Ativo foi apagado enquanto editava.");
                     else ModelState.AddModelError("", "Este ativo foi modificado. Recarregue a página e tente novamente.");
                 }
                 catch (DbUpdateException ex)
@@ -442,13 +442,13 @@ namespace ESW2.Controllers
 
             if (ativo_financeiro == null)
             {
-                TempData["InfoMessage"] = $"Ativo financeiro com ID {id} não encontrado ou já foi eliminado.";
+                TempData["InfoMessage"] = $"Ativo financeiro com ID {id} não encontrado ou já foi apagado.";
                 return RedirectToAction(nameof(Index));
             }
 
             if (ativo_financeiro.id_cliente != clienteId.Value)
             {
-                TempData["ErrorMessage"] = "Não tem permissão para eliminar este ativo.";
+                TempData["ErrorMessage"] = "Não tem permissão para apagar este ativo.";
                 return RedirectToAction(nameof(Index));
             }
 
@@ -474,7 +474,7 @@ namespace ESW2.Controllers
 
             if (ativo_financeiro == null)
             {
-                TempData["InfoMessage"] = "Ativo financeiro não encontrado ou você não tem permissão para eliminá-lo.";
+                TempData["InfoMessage"] = "Ativo financeiro não encontrado ou você não tem permissão para apagá-lo.";
                 return RedirectToAction(nameof(Index));
             }
 
@@ -485,7 +485,7 @@ namespace ESW2.Controllers
 
                 if (hasRelatedRecords)
                 {
-                    TempData["ErrorMessage"] = "Não é possível eliminar este ativo porque ele possui impostos pagos associados.";
+                    TempData["ErrorMessage"] = "Não é possível apagar este ativo porque ele possui impostos pagos associados.";
                     return RedirectToAction(nameof(Index));
                 }
 
@@ -525,19 +525,19 @@ namespace ESW2.Controllers
 
                 await _context.SaveChangesAsync();
 
-                TempData["SuccessMessage"] = "Ativo financeiro e registro associado eliminados com sucesso!";
+                TempData["SuccessMessage"] = "Ativo financeiro apagado com sucesso!";
                 return RedirectToAction(nameof(Index));
             }
             catch (DbUpdateException ex)
             {
-                Console.WriteLine($"DbUpdateException ao eliminar AtivoFinanceiro ID {id} ou registro associado: {ex.ToString()}");
-                TempData["ErrorMessage"] = $"Erro ao eliminar o ativo ou registro associado: {ex.InnerException?.Message ?? ex.Message}";
+                Console.WriteLine($"DbUpdateException ao apagar AtivoFinanceiro ID {id} ou registo associado: {ex.ToString()}");
+                TempData["ErrorMessage"] = $"Erro ao apagar o ativo ou registo associado: {ex.InnerException?.Message ?? ex.Message}";
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Exception ao eliminar AtivoFinanceiro ID {id} ou registro associado: {ex.ToString()}");
-                TempData["ErrorMessage"] = $"Erro inesperado ao eliminar o ativo ou registro associado: {ex.Message}";
+                Console.WriteLine($"Exception ao apagar AtivoFinanceiro ID {id} ou registo associado: {ex.ToString()}");
+                TempData["ErrorMessage"] = $"Erro inesperado ao apagar o ativo ou registo associado: {ex.Message}";
                 return RedirectToAction(nameof(Index));
             }
         }
