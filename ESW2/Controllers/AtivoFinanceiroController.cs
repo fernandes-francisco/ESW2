@@ -67,7 +67,7 @@ namespace ESW2.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string nome, string tipo, decimal? montanteAplicado)
         {
             var clienteId = await GetCurrentClienteId();
             if (clienteId == null)
@@ -75,16 +75,74 @@ namespace ESW2.Controllers
                 return Unauthorized("Perfil de cliente não encontrado ou utilizador não autenticado.");
             }
 
-            var ativos = await _context.ativo_financeiros
+            // Consulta inicial para ativos financeiros do cliente
+            var ativosQuery = _context.ativo_financeiros
                 .Where(a => a.id_cliente == clienteId.Value)
                 .Include(a => a.id_depositoNavigation)
                     .ThenInclude(d => d.id_bancoNavigation)
                 .Include(a => a.id_fundoNavigation)
                 .Include(a => a.id_imovelNavigation)
+                .AsQueryable();
+
+            // Filtrar por tipo, se fornecido
+            if (!string.IsNullOrEmpty(tipo))
+            {
+                if (tipo == "Deposito")
+                {
+                    ativosQuery = ativosQuery.Where(a => a.id_deposito.HasValue);
+                }
+                else if (tipo == "Fundo")
+                {
+                    ativosQuery = ativosQuery.Where(a => a.id_fundo.HasValue);
+                }
+                else if (tipo == "Imovel")
+                {
+                    ativosQuery = ativosQuery.Where(a => a.id_imovel.HasValue);
+                }
+            }
+
+            // Filtrar por nome, se fornecido
+            if (!string.IsNullOrEmpty(nome))
+            {
+                ativosQuery = ativosQuery.Where(a =>
+                    (a.id_deposito.HasValue && (
+                        a.id_depositoNavigation.id_bancoNavigation.nome_banco.Contains(nome) ||
+                        a.id_depositoNavigation.numero_conta_banco.Contains(nome))) ||
+                    (a.id_fundo.HasValue && a.id_fundoNavigation.nome.Contains(nome)) ||
+                    (a.id_imovel.HasValue && a.id_imovelNavigation.designacao.Contains(nome)));
+            }
+
+            // Filtrar por montante aplicado (apenas para fundos de investimento e depósitos)
+            if (montanteAplicado.HasValue)
+            {
+                // Filtrar fundos de investimento
+                var fundosFiltrados = _context.fundo_investimentos
+                    .Where(fi => fi.valor_investido == (double)montanteAplicado.Value)
+                    .Select(fi => fi.id_fundo);
+
+                // Filtrar depósitos a prazo
+                var depositosFiltrados = _context.deposito_prazos
+                    .Where(dp => dp.valor_deposito == (double)montanteAplicado.Value)
+                    .Select(dp => dp.id_deposito);
+
+                // Aplicar filtro aos ativos financeiros
+                ativosQuery = ativosQuery.Where(af =>
+                    (af.id_fundo.HasValue && fundosFiltrados.Contains(af.id_fundo.Value)) ||
+                    (af.id_deposito.HasValue && depositosFiltrados.Contains(af.id_deposito.Value)));
+            }
+
+            // Executar a consulta
+            var ativos = await ativosQuery
                 .OrderByDescending(a => a.data_inicio)
                 .AsNoTracking()
                 .ToListAsync();
 
+            // Passar os critérios de pesquisa para a view (para preencher os campos do formulário)
+            ViewBag.Nome = nome;
+            ViewBag.Tipo = tipo;
+            ViewBag.MontanteAplicado = montanteAplicado;
+
+            // Mensagens de sucesso/erro/info
             ViewBag.SuccessMessage = TempData["SuccessMessage"];
             ViewBag.ErrorMessage = TempData["ErrorMessage"];
             ViewBag.InfoMessage = TempData["InfoMessage"];
@@ -216,7 +274,6 @@ namespace ESW2.Controllers
                     ativo.id_deposito = null;
                     ativo.id_imovel = null;
 
-                    // Since we're only creating new funds, require nome_fundo_novo and validate
                     if (string.IsNullOrEmpty(nome_fundo_novo))
                     {
                         ModelState.AddModelError("nome_fundo_novo", "O nome do fundo é obrigatório.");
@@ -537,7 +594,7 @@ namespace ESW2.Controllers
             catch (Exception ex)
             {
                 Console.WriteLine($"Exception ao apagar AtivoFinanceiro ID {id} ou registo associado: {ex.ToString()}");
-                TempData["ErrorMessage"] = $"Erro inesperado ao apagar o ativo ou registo associado: {ex.Message}";
+                TempData["ErrorMessage"] = "Erro inesperado ao apagar o ativo ou registo associado: " + ex.Message;
                 return RedirectToAction(nameof(Index));
             }
         }
