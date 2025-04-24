@@ -1,0 +1,18 @@
+@model ESW2.Models.AdminSettingsViewModel
+@{
+    ViewData["Title"] = "Configurar Juros e Impostos";
+}
+<h2>@ViewData["Title"]</h2>
+<a asp-action="Index" class="btn btn-secondary mb-3">Voltar para Painel</a>
+<form asp-action="UpdateSettings" method="post">
+    @Html.AntiForgeryToken()
+    <div class="mb-3">
+        <label class="form-label">Juro Anual Padrão (%)</label>
+        <input asp-for="DefaultInterestRate" class="form-control" step="0.01" min="0" />
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Percentual de Imposto (%)</label>
+        <input asp-for="DefaultTaxRate" class="form-control" step="0.01" min="0" />
+    </div>
+    <button type="submit" class="btn btn-success">Salvar</button>
+</form>

@@ -1,0 +1,31 @@
+@model List<ESW2.Entities.banco>
+@{
+    ViewData["Title"] = "Gerenciar Bancos";
+}
+<h2>@ViewData["Title"]</h2>
+<a asp-action="Index" class="btn btn-secondary mb-3">Voltar para Painel</a>
+<table class="table table-striped">
+    <thead>
+    <tr><th>Nome</th><th>Ações</th></tr>
+    </thead>
+    <tbody>
+    @foreach(var banco in Model) {
+        <tr>
+            <td>@banco.nome_banco</td>
+            <td>
+                <a asp-action="EditBank" asp-route-id="@banco.id_banco" class="btn btn-sm btn-primary">Editar</a>
+                <a asp-action="DeleteBank" asp-route-id="@banco.id_banco" class="btn btn-sm btn-danger">Excluir</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+<h4>Adicionar Novo Banco</h4>
+<form asp-action="AddBank" method="post">
+    @Html.AntiForgeryToken()
+    <div class="mb-3">
+        <label class="form-label">Nome do Banco</label>
+        <input name="nome_banco" class="form-control" required />
+    </div>
+    <button type="submit" class="btn btn-success">Adicionar</button>
+</form>

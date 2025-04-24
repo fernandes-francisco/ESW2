@@ -1,0 +1,111 @@
+@model ESW2.Entities.ativo_financeiro
+@using ESW2.Entities
+
+@{
+    ViewData["Title"] = "Editar Ativo Financeiro";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<div class="mb-3">
+    <a asp-action="Index" class="btn btn-secondary">Voltar para listagem</a>
+</div>
+
+<form asp-action="Edit" method="post">
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.id_ativo)
+
+    <!-- Nome do Investimento -->
+    <div class="mb-3">
+        <label class="form-label">Nome do Investimento:</label>
+        <input name="nomeInvestimento" type="text" class="form-control"
+               value="@(Model.id_depositoNavigation != null ? Model.id_depositoNavigation.numero_conta_banco :
+                       Model.id_fundoNavigation != null ? Model.id_fundoNavigation.nome :
+                       Model.id_imovelNavigation != null ? Model.id_imovelNavigation.designacao :
+                       string.Empty)" />
+    </div>
+
+    <!-- Data de Início -->
+    <div class="mb-3">
+        <label class="form-label">Data de Início:</label>
+        <input name="data_inicio" type="date" class="form-control"
+               value="@Model.data_inicio.ToString("yyyy-MM-dd")" />
+    </div>
+
+    <!-- Duração -->
+    <div class="mb-3">
+        <label class="form-label">Duração (meses):</label>
+        <input name="duracao_meses" type="number" min="1" class="form-control"
+               value="@Model.duracao_meses" />
+    </div>
+
+    <!-- Tipo específico -->
+    @if (Model.id_depositoNavigation != null)
+    {
+        <h5>Informações do Depósito</h5>
+        <div class="mb-3">
+            <label class="form-label">Conta Bancária:</label>
+            <input name="numero_conta_banco" type="text" class="form-control"
+                   value="@Model.id_depositoNavigation.numero_conta_banco" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Titulares:</label>
+            <input name="titulares" type="text" class="form-control"
+                   value="@Model.id_depositoNavigation.titulares" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Valor depositado :</label>
+            <input name="TransacaoValor" type="number" step="0.01" min="0" class="form-control"
+                   value="@Model.id_depositoNavigation.valor_deposito" />
+        </div>
+    }
+    else if (Model.id_fundoNavigation != null)
+    {
+        <h5>Informações do Fundo de Investimento</h5>
+        <div class="mb-3">
+            <label class="form-label">Montante Investido :</label>
+            <input name="TransacaoValor" type="number" step="0.01" min="0" class="form-control"
+                   value="@Model.id_fundoNavigation.valor_investido" />
+        </div>
+    }
+    else if (Model.id_imovelNavigation != null)
+    {
+        <h5>Informações do Imóvel Arrendado</h5>
+        <div class="mb-3">
+            <label class="form-label">Designação:</label>
+            <input name="designacao" type="text" class="form-control"
+                   value="@Model.id_imovelNavigation.designacao" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Localização:</label>
+            <input name="localizacao" type="text" class="form-control"
+                   value="@Model.id_imovelNavigation.localizacao" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Valor do Imóvel (R$):</label>
+            <input name="TransacaoValor" type="number" step="0.01" min="0" class="form-control"
+                   value="@Model.id_imovelNavigation.valor_imovel" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Renda Mensal :</label>
+            <input name="valor_renda" type="number" step="0.01" min="0" class="form-control"
+                   value="@Model.id_imovelNavigation.valor_renda" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Despesa Mensal Condomínio:</label>
+            <input name="valor_mensal_cond" type="number" step="0.01" min="0" class="form-control"
+                   value="@Model.id_imovelNavigation.valor_mensal_cond" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Despesa Anual:</label>
+            <input name="valor_anual_despesas" type="number" step="0.01" min="0" class="form-control"
+                   value="@Model.id_imovelNavigation.valor_anual_despesas" />
+        </div>
+    }
+
+    <button type="submit" class="btn btn-primary mt-3">Salvar Alterações</button>
+</form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,0 +1,8 @@
+@{
+    ViewData["Title"] = "Painel Administrativo";
+}
+<h2>@ViewData["Title"]</h2>
+<div class="list-group">
+    <a asp-controller="Admin" asp-action="Banks" class="list-group-item list-group-item-action">Gerenciar Bancos</a>
+    <a asp-controller="Admin" asp-action="Settings" class="list-group-item list-group-item-action">Configurar Juros e Impostos</a>
+</div>
