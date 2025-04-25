@@ -45,9 +45,6 @@
                     <li class="nav-item mb-2">
                         <a class="nav-link" asp-controller="Cliente" asp-action="Perfil">Perfil</a>
                     </li>
-                    <li class="nav-item mb-2">
-                        <a class="nav-link" asp-controller="Cliente" asp-action="Config">Configurações</a>
-                    </li>
                     @if (!User.IsInRole("Admin"))
                     {
                         <li class="nav-item mb-2">
@@ -80,7 +77,6 @@
         @RenderBody()
     </main>
 </div>
-
 
 <!-- SCRIPTS -->
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
