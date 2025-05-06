@@ -16,7 +16,7 @@
     <hr />
     <dl class="row">
         <dt class="col-sm-2">Data de Início:</dt>
-        <dd class="col-sm-10">@Model.data_inicio</dd>
+        <dd class="col-sm-10">@Model.data_inicio.ToString("dd/MM/yyyy")</dd>
         <dt class="col-sm-2">Duração (meses):</dt>
         <dd class="col-sm-10">@Model.duracao_meses</dd>
         <dt class="col-sm-2">Percentual de Imposto:</dt>
@@ -31,6 +31,8 @@
             <dd class="col-sm-10">@Model.id_depositoNavigation.id_bancoNavigation?.nome_banco</dd>
             <dt class="col-sm-2">Número da Conta:</dt>
             <dd class="col-sm-10">@Model.id_depositoNavigation.numero_conta_banco</dd>
+            <dt class="col-sm-2">Valor Inicial:</dt>
+            <dd class="col-sm-10">@Model.id_depositoNavigation.valor_deposito</dd>
         }
         else if (Model.id_fundoNavigation != null)
         {
@@ -38,6 +40,8 @@
             <dd class="col-sm-10">Fundo de Investimento</dd>
             <dt class="col-sm-2">Nome do Fundo:</dt>
             <dd class="col-sm-10">@Model.id_fundoNavigation.nome</dd>
+            <dt class="col-sm-2">Valor Inicial:</dt>
+            <dd class="col-sm-10">@Model.id_fundoNavigation.valor_investido</dd>
         }
         else if (Model.id_imovelNavigation != null)
         {
@@ -47,6 +51,15 @@
             <dd class="col-sm-10">@Model.id_imovelNavigation.designacao</dd>
             <dt class="col-sm-2">Localização:</dt>
             <dd class="col-sm-10">@Model.id_imovelNavigation.localizacao</dd>
+            <dt class="col-sm-2">Valor Inicial:</dt>
+            <dd class="col-sm-10">@Model.id_imovelNavigation.valor_imovel</dd>
+        }
+        else
+        {
+            <dt class="col-sm-2">Tipo:</dt>
+            <dd class="col-sm-10">Outro</dd>
+            <dt class="col-sm-2">Valor Inicial:</dt>
+            <dd class="col-sm-10">N/A</dd>
         }
     </dl>
 </div>

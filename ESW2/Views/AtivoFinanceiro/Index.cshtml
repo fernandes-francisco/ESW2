@@ -46,161 +46,191 @@
         .sidebar .filter-content h4 {
             margin-bottom: 20px;
         }
-        
+
         .table-container {
             margin-top: 20px;
         }
     </style>
 </head>
 <body>
-    <div class="container mt-5">
-        <h1>Os meus Ativos Financeiros</h1>
+<div class="container mt-5">
+    <h1>Os meus Ativos Financeiros</h1>
 
-        <!-- Container para alinhar os botões -->
-        <div class="d-flex gap-2 mb-3">
-            <!-- Botão "Inserir Novo Ativo" -->
-            <a asp-action="Create" class="btn btn-primary">Inserir Novo Ativo</a>
-            <!-- Botão "Pesquisar" ao lado -->
-            <button class="btn btn-primary" onclick="openSidebar()">Pesquisar</button>
-        </div>
+    <!-- Container para alinhar os botões -->
+    <div class="d-flex gap-2 mb-3">
+        <!-- Botão "Inserir Novo Ativo" -->
+        <a asp-action="Create" class="btn btn-primary">Inserir Novo Ativo</a>
+        <!-- Botão "Pesquisar" ao lado -->
+        <button class="btn btn-primary" onclick="openSidebar()">Pesquisar</button>
+    </div>
 
-        <!-- Menu lateral com os filtros -->
-        <div id="filterSidebar" class="sidebar">
-            <span class="close-btn" onclick="closeSidebar()">×</span>
-            <div class="filter-content">
-                <h4>Filtros de Pesquisa</h4>
-                <form asp-action="Index" method="get">
-                    <div class="mb-3">
-                        <label for="nome" class="form-label">Nome</label>
-                        <input type="text" class="form-control" id="nome" name="nome" value="@ViewBag.Nome" placeholder="Ex.: Banco X ou Fundo A" />
-                    </div>
-                    <div class="mb-3">
-                        <label for="tipo" class="form-label">Tipo</label>
-                        <select class="form-select" id="tipo" name="tipo">
-                            @{
-                                var tipos = new[]
+    <!-- Menu lateral com os filtros -->
+    <div id="filterSidebar" class="sidebar">
+        <span class="close-btn" onclick="closeSidebar()">×</span>
+        <div class="filter-content">
+            <h4>Filtros de Pesquisa</h4>
+            <form asp-action="Index" method="get">
+                <div class="mb-3">
+                    <label for="nome" class="form-label">Nome</label>
+                    <input type="text" class="form-control" id="nome" name="nome" value="@ViewBag.Nome" placeholder="Ex.: Banco X ou Fundo A" />
+                </div>
+                <div class="mb-3">
+                    <label for="tipo" class="form-label">Tipo</label>
+                    <select class="form-select" id="tipo" name="tipo">
+                        @{
+                            var tipos = new[]
+                            {
+                                new { Value = "", Text = "Todos" },
+                                new { Value = "Deposito", Text = "Depósito a Prazo" },
+                                new { Value = "Fundo", Text = "Fundo de Investimento" },
+                                new { Value = "Imovel", Text = "Imóvel Arrendado" }
+                            };
+
+                            foreach (var tipoOption in tipos)
+                            {
+                                if (ViewBag.Tipo == tipoOption.Value || (string.IsNullOrEmpty(ViewBag.Tipo) && tipoOption.Value == ""))
                                 {
-                                    new { Value = "", Text = "Todos" },
-                                    new { Value = "Deposito", Text = "Depósito a Prazo" },
-                                    new { Value = "Fundo", Text = "Fundo de Investimento" },
-                                    new { Value = "Imovel", Text = "Imóvel Arrendado" }
-                                };
-
-                                foreach (var tipoOption in tipos)
+                                    <option value="@tipoOption.Value" selected>@tipoOption.Text</option>
+                                }
+                                else
                                 {
-                                    if (ViewBag.Tipo == tipoOption.Value || (string.IsNullOrEmpty(ViewBag.Tipo) && tipoOption.Value == ""))
-                                    {
-                                        <option value="@tipoOption.Value" selected>@tipoOption.Text</option>
-                                    }
-                                    else
-                                    {
-                                        <option value="@tipoOption.Value">@tipoOption.Text</option>
-                                    }
+                                    <option value="@tipoOption.Value">@tipoOption.Text</option>
                                 }
                             }
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="montanteAplicado" class="form-label">Montante Aplicado</label>
-                        <input type="number" class="form-control" id="montanteAplicado" name="montanteAplicado" value="@ViewBag.MontanteAplicado" placeholder="Ex.: 1000" step="0.01" />
-                    </div>
-                    <button type="submit" class="btn btn-primary" onclick="closeSidebar()">Pesquisar</button>
-                </form>
-            </div>
-        </div>
-
-        <!-- Exibir mensagens de sucesso/erro/info -->
-        @if (ViewBag.SuccessMessage != null)
-        {
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <strong>Sucesso!</strong> @ViewBag.SuccessMessage
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        }
-        @if (ViewBag.ErrorMessage != null)
-        {
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <strong>Erro!</strong> @ViewBag.ErrorMessage
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        }
-        @if (ViewBag.InfoMessage != null)
-        {
-            <div class="alert alert-info alert-dismissible fade show" role="alert">
-                <strong>Info!</strong> @ViewBag.InfoMessage
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        }
-
-        <!-- Tabela de resultados -->
-        <div class="table-container">
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>Nome</th>
-                        <th>Data Início</th>
-                        <th>Duração (meses)</th>
-                        <th>Imposto (%)</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @if (Model != null && Model.Any())
-                    {
-                        @foreach (var ativo in Model)
-                        {
-                            <tr>
-                                <td>
-                                    @if (ativo.id_deposito.HasValue)
-                                    {
-                                        @(ativo.id_depositoNavigation?.id_bancoNavigation?.nome_banco + " - " + ativo.id_depositoNavigation?.numero_conta_banco)
-                                    }
-                                    else if (ativo.id_fundo.HasValue)
-                                    {
-                                        @ativo.id_fundoNavigation?.nome
-                                    }
-                                    else if (ativo.id_imovel.HasValue)
-                                    {
-                                        @ativo.id_imovelNavigation?.designacao
-                                    }
-                                    else
-                                    {
-                                        @: Sem Nome
-                                    }
-                                </td>
-                                <td>@ativo.data_inicio.ToString("dd/MM/yyyy")</td>
-                                <td>@ativo.duracao_meses</td>
-                                <td>@ativo.percentual_imposto</td>
-                                <td>
-                                    <a asp-action="Edit" asp-route-id="@ativo.id_ativo" class="btn btn-sm btn-primary">Atualizar</a>
-                                    <a asp-action="Delete" asp-route-id="@ativo.id_ativo" class="btn btn-sm btn-danger">Apagar</a>
-                                </td>
-                            </tr>
                         }
-                    }
-                    else
-                    {
-                        <tr>
-                            <td colspan="5" class="text-center">Nenhum ativo financeiro encontrado.</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="montanteAplicado" class="form-label">Montante Aplicado</label>
+                    <input type="number" class="form-control" id="montanteAplicado" name="montanteAplicado" value="@ViewBag.MontanteAplicado" placeholder="Ex.: 1000" step="0.01" />
+                </div>
+                <div class="mb-3 form-check">
+                    <input type="checkbox" class="form-check-input" id="somenteAtivosAtuais" name="somenteAtivosAtuais" value="true" @(ViewBag.SomenteAtivosAtuais == true ? "checked" : "") />
+                    <label for="somenteAtivosAtuais" class="form-check-label">Somente Ativos na Data Atual</label>
+                </div>
+                <button type="submit" class="btn btn-primary" onclick="closeSidebar()">Pesquisar</button>
+            </form>
         </div>
     </div>
 
-    <!-- Scripts para abrir/fechar o menu lateral -->
-    <script>
-        function openSidebar() {
-            document.getElementById("filterSidebar").classList.add("open");
-        }
+    <!-- Exibir mensagens de sucesso/erro/info -->
+    @if (ViewBag.SuccessMessage != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <strong>Sucesso!</strong> @ViewBag.SuccessMessage
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (ViewBag.ErrorMessage != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>Erro!</strong> @ViewBag.ErrorMessage
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (ViewBag.InfoMessage != null)
+    {
+        <div class="alert alert-info alert-dismissible fade show" role="alert">
+            <strong>Info!</strong> @ViewBag.InfoMessage
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
 
-        function closeSidebar() {
-            document.getElementById("filterSidebar").classList.remove("open");
-        }
-    </script>
+    <!-- Tabela de resultados -->
+    <div class="table-container">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Tipo</th>
+                <th>Valor Inicial</th>
+                <th>Data Início</th>
+                <th>Duração (meses)</th>
+                <th>Imposto (%)</th>
+                <th>Ações</th>
+            </tr>
+            </thead>
+            <tbody>
+            @if (Model != null && Model.Any())
+            {
+                @foreach (var ativo in Model)
+                {
+                    <tr>
+                        <td>
+                            @if (ativo.id_deposito.HasValue)
+                            {
+                                @(ativo.id_depositoNavigation?.id_bancoNavigation?.nome_banco + " - " + ativo.id_depositoNavigation?.numero_conta_banco)
+                            }
+                            else if (ativo.id_fundo.HasValue)
+                            {
+                                @ativo.id_fundoNavigation?.nome
+                            }
+                            else if (ativo.id_imovel.HasValue)
+                            {
+                                @ativo.id_imovelNavigation?.designacao
+                            }
+                            else
+                            {
+                                @: Sem Nome
+                            }
+                        </td>
+                        <td>
+                            @if (ativo.id_deposito.HasValue) { <text>Depósito</text> }
+                            else if (ativo.id_fundo.HasValue) { <text>Fundo</text> }
+                            else if (ativo.id_imovel.HasValue) { <text>Imóvel</text> }
+                            else { <text>Outro</text> }
+                        </td>
+                        <td>
+                            @if (ativo.id_deposito.HasValue)
+                            {
+                                @ativo.id_depositoNavigation?.valor_deposito
+                            }
+                            else if (ativo.id_fundo.HasValue)
+                            {
+                                @ativo.id_fundoNavigation?.valor_investido
+                            }
+                            else if (ativo.id_imovel.HasValue)
+                            {
+                                @ativo.id_imovelNavigation?.valor_imovel
+                            }
+                            else
+                            {
+                                @: N/A
+                            }
+                        </td>
+                        <td>@ativo.data_inicio.ToString("dd/MM/yyyy")</td>
+                        <td>@ativo.duracao_meses</td>
+                        <td>@ativo.percentual_imposto</td>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@ativo.id_ativo" class="btn btn-sm btn-primary">Atualizar</a>
+                            <a asp-action="Delete" asp-route-id="@ativo.id_ativo" class="btn btn-sm btn-danger">Apagar</a>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="7" class="text-center">Nenhum ativo financeiro encontrado.</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>
 
-    <!-- Inclui Bootstrap JS para funcionalidades como alerts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Scripts para abrir/fechar o menu lateral -->
+<script>
+    function openSidebar() {
+        document.getElementById("filterSidebar").classList.add("open");
+    }
+
+    function closeSidebar() {
+        document.getElementById("filterSidebar").classList.remove("open");
+    }
+</script>
+
+<!-- Inclui Bootstrap JS para funcionalidades como alerts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

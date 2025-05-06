@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "/home/o0001/RiderProjects/ESW21/ESW2/ESW2.csproj": {}
+    "C:\\Users\\tomas\\RiderProjects\\ESW24\\ESW2\\ESW2.csproj": {}
   },
   "projects": {
-    "/home/o0001/RiderProjects/ESW21/ESW2/ESW2.csproj": {
+    "C:\\Users\\tomas\\RiderProjects\\ESW24\\ESW2\\ESW2.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/o0001/RiderProjects/ESW21/ESW2/ESW2.csproj",
+        "projectUniqueName": "C:\\Users\\tomas\\RiderProjects\\ESW24\\ESW2\\ESW2.csproj",
         "projectName": "ESW2",
-        "projectPath": "/home/o0001/RiderProjects/ESW21/ESW2/ESW2.csproj",
-        "packagesPath": "/home/o0001/.nuget/packages/",
-        "outputPath": "/home/o0001/RiderProjects/ESW21/ESW2/obj/",
+        "projectPath": "C:\\Users\\tomas\\RiderProjects\\ESW24\\ESW2\\ESW2.csproj",
+        "packagesPath": "C:\\Users\\tomas\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\tomas\\RiderProjects\\ESW24\\ESW2\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/home/o0001/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\tomas\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
@@ -38,7 +38,7 @@
           "auditLevel": "low",
           "auditMode": "direct"
         },
-        "SdkAnalysisLevel": "9.0.100"
+        "SdkAnalysisLevel": "9.0.200"
       },
       "frameworks": {
         "net9.0": {
@@ -80,12 +80,6 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
-          "downloadDependencies": [
-            {
-              "name": "Microsoft.AspNetCore.App.Ref",
-              "version": "[9.0.4, 9.0.4]"
-            }
-          ],
           "frameworkReferences": {
             "Microsoft.AspNetCore.App": {
               "privateAssets": "none"
@@ -94,7 +88,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/9.0.105/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.200/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
