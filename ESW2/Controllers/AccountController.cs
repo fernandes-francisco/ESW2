@@ -202,7 +202,7 @@ namespace ESW2.Controllers
         {
             if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(adminPassword))
             {
-                ModelState.AddModelError("", "Nome de utilizador e senha de admin são obrigatórios.");
+                ViewBag.ErrorMessage = "Nome de utilizador e palavra-passe de administrador são obrigatórios.";
                 return View();
             }
 
@@ -211,13 +211,13 @@ namespace ESW2.Controllers
 
             if (user == null)
             {
-                ModelState.AddModelError("", "Utilizador não encontrado!");
+                ViewBag.ErrorMessage = "Utilizador não encontrado!";
                 return View();
             }
 
             if (adminPassword != AdminPassword)
             {
-                ModelState.AddModelError("", "Senha de admin incorreta!");
+                ViewBag.ErrorMessage = "Palavra-passe de administrador incorreta! Por favor, utilize a palavra-passe específica fornecida pela equipa.";
                 return View();
             }
 
@@ -260,7 +260,7 @@ namespace ESW2.Controllers
         {
             if (string.IsNullOrWhiteSpace(email))
             {
-                ModelState.AddModelError("email", "O endereço de email é obrigatório.");
+                ViewBag.ErrorMessage = "O endereço de email é obrigatório.";
                 return View();
             }
             return RedirectToAction("Login");
