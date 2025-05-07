@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "IIhz6YfYBmLWqXLpk7Q2njjn6ZYBXZBnEeeLwtgNL1A=",
+  "Hash": "Rc/bR+ARGDFkn3d7GdA4B1Pdae9+T4JyYjX06qcbNV8=",
   "Source": "ESW2",
   "BasePath": "_content/ESW2",
   "Mode": "Default",
@@ -1403,6 +1403,27 @@
       "OriginalItemSpec": "C:\\Users\\tomas\\RiderProjects\\ESW24\\ESW2\\obj\\Debug\\net9.0\\scopedcss\\projectbundle\\ESW2.bundle.scp.css"
     },
     {
+      "Identity": "C:\\Users\\tomas\\RiderProjects\\ESW24\\ESW2\\wwwroot\\ativoslogo.png",
+      "SourceId": "ESW2",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\tomas\\RiderProjects\\ESW24\\ESW2\\wwwroot\\",
+      "BasePath": "_content/ESW2",
+      "RelativePath": "ativoslogo#[.{fingerprint}]?.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "24ilfvskng",
+      "Integrity": "8lkjVRjvPKZ5Ro831nrKhBsr0NBKd1DZ8i6yJHZGMOE=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\ativoslogo.png"
+    },
+    {
       "Identity": "C:\\Users\\tomas\\RiderProjects\\ESW24\\ESW2\\wwwroot\\css\\site.css",
       "SourceId": "ESW2",
       "SourceType": "Discovered",
@@ -2727,6 +2748,88 @@
     }
   ],
   "Endpoints": [
+    {
+      "Route": "ativoslogo.24ilfvskng.png",
+      "AssetFile": "C:\\Users\\tomas\\RiderProjects\\ESW24\\ESW2\\wwwroot\\ativoslogo.png",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "8582"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/png"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"8lkjVRjvPKZ5Ro831nrKhBsr0NBKd1DZ8i6yJHZGMOE=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 07 May 2025 10:05:16 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "24ilfvskng"
+        },
+        {
+          "Name": "label",
+          "Value": "ativoslogo.png"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-8lkjVRjvPKZ5Ro831nrKhBsr0NBKd1DZ8i6yJHZGMOE="
+        }
+      ]
+    },
+    {
+      "Route": "ativoslogo.png",
+      "AssetFile": "C:\\Users\\tomas\\RiderProjects\\ESW24\\ESW2\\wwwroot\\ativoslogo.png",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "8582"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/png"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"8lkjVRjvPKZ5Ro831nrKhBsr0NBKd1DZ8i6yJHZGMOE=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 07 May 2025 10:05:16 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-8lkjVRjvPKZ5Ro831nrKhBsr0NBKd1DZ8i6yJHZGMOE="
+        }
+      ]
+    },
     {
       "Route": "css/site.b9sayid5wm.css",
       "AssetFile": "C:\\Users\\tomas\\RiderProjects\\ESW24\\ESW2\\obj\\Debug\\net9.0\\compressed\\lwlg9cn62v-b9sayid5wm.gz",

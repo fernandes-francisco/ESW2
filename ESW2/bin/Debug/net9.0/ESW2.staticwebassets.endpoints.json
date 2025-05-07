@@ -301,6 +301,88 @@
       ]
     },
     {
+      "Route": "ativoslogo.24ilfvskng.png",
+      "AssetFile": "ativoslogo.png",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "8582"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/png"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"8lkjVRjvPKZ5Ro831nrKhBsr0NBKd1DZ8i6yJHZGMOE=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 07 May 2025 10:05:16 GMT"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "24ilfvskng"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-8lkjVRjvPKZ5Ro831nrKhBsr0NBKd1DZ8i6yJHZGMOE="
+        },
+        {
+          "Name": "label",
+          "Value": "ativoslogo.png"
+        }
+      ]
+    },
+    {
+      "Route": "ativoslogo.png",
+      "AssetFile": "ativoslogo.png",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "8582"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/png"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"8lkjVRjvPKZ5Ro831nrKhBsr0NBKd1DZ8i6yJHZGMOE=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 07 May 2025 10:05:16 GMT"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-8lkjVRjvPKZ5Ro831nrKhBsr0NBKd1DZ8i6yJHZGMOE="
+        }
+      ]
+    },
+    {
       "Route": "css/site.b9sayid5wm.css",
       "AssetFile": "css/site.css.gz",
       "Selectors": [

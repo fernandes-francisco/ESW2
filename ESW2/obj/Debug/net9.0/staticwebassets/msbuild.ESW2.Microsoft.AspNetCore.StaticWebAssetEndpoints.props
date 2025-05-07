@@ -1,5 +1,17 @@
 ﻿<Project>
   <ItemGroup>
+    <StaticWebAssetEndpoint Include="_content/ESW2/ativoslogo.24ilfvskng.png">
+      <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\ativoslogo.png'))</AssetFile>
+      <Selectors><![CDATA[[]]]></Selectors>
+      <EndpointProperties><![CDATA[[{"Name":"fingerprint","Value":"24ilfvskng"},{"Name":"integrity","Value":"sha256-8lkjVRjvPKZ5Ro831nrKhBsr0NBKd1DZ8i6yJHZGMOE="},{"Name":"label","Value":"_content/ESW2/ativoslogo.png"}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=31536000, immutable"},{"Name":"Content-Length","Value":"8582"},{"Name":"Content-Type","Value":"image/png"},{"Name":"ETag","Value":"\u00228lkjVRjvPKZ5Ro831nrKhBsr0NBKd1DZ8i6yJHZGMOE=\u0022"},{"Name":"Last-Modified","Value":"Wed, 07 May 2025 10:05:16 GMT"}]]]></ResponseHeaders>
+    </StaticWebAssetEndpoint>
+    <StaticWebAssetEndpoint Include="_content/ESW2/ativoslogo.png">
+      <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\ativoslogo.png'))</AssetFile>
+      <Selectors><![CDATA[[]]]></Selectors>
+      <EndpointProperties><![CDATA[[{"Name":"integrity","Value":"sha256-8lkjVRjvPKZ5Ro831nrKhBsr0NBKd1DZ8i6yJHZGMOE="}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=3600, must-revalidate"},{"Name":"Content-Length","Value":"8582"},{"Name":"Content-Type","Value":"image/png"},{"Name":"ETag","Value":"\u00228lkjVRjvPKZ5Ro831nrKhBsr0NBKd1DZ8i6yJHZGMOE=\u0022"},{"Name":"Last-Modified","Value":"Wed, 07 May 2025 10:05:16 GMT"}]]]></ResponseHeaders>
+    </StaticWebAssetEndpoint>
     <StaticWebAssetEndpoint Include="_content/ESW2/css/site.b9sayid5wm.css">
       <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\css\site.css'))</AssetFile>
       <Selectors><![CDATA[[]]]></Selectors>
