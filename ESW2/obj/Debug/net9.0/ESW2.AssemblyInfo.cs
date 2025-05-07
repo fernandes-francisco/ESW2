@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ESW2")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a0d871031644c34fbdd14b4b88ae72baf39ba380")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a4a015744163c60230beba15c5d3ae0114eee957")]
 [assembly: System.Reflection.AssemblyProductAttribute("ESW2")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ESW2")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

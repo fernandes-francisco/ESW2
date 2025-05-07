@@ -12,11 +12,66 @@
     <title>@ViewData["Title"]</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
     <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa; /* Fundo leve para destacar o conteúdo */
+            overflow: auto;
+        }
+
+        /* Estilo para a barra azul no topo */
+        .top-bar {
+            width: 100%;
+            height: 60px;
+            background-color: #0d6efd; /* Azul do Bootstrap (cor da aplicação) */
+            display: flex;
+            align-items: center;
+            padding: 0 24px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1100; /* Garante que a barra fique acima do conteúdo */
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+        }
+
+        .hamburger-btn {
+            background: none;
+            border: none;
+            margin-right: 18px;
+            padding: 8px 10px 8px 0;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .hamburger-btn:focus {
+            outline: none;
+        }
+
+        .hamburger-icon {
+            width: 28px;
+            height: 28px;
+            display: block;
+        }
+
+        .top-bar img {
+            height: 44px; /* Altura do logotipo */
+            width: auto; /* Mantém proporção */
+            display: block;
+        }
+
+        /* Ajuste para o conteúdo principal não ser coberto pela barra fixa */
+        .main-content {
+            margin-top: 70px; /* Espaço para a barra */
+            padding-bottom: 20px;
+        }
+
         .sidebar {
             height: 100%;
             width: 0;
             position: fixed;
-            z-index: 1000;
+            z-index: 1200; /* Acima da barra azul */
             top: 0;
             right: 0;
             background-color: #f8f9fa;
@@ -53,7 +108,69 @@
     </style>
 </head>
 <body>
-<div class="container mt-5">
+<!-- Barra azul com botão hamburger e logotipo -->
+<div class="top-bar">
+    <button class="hamburger-btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#sideMenu" aria-controls="sideMenu" aria-label="Abrir menu">
+        <!-- Ícone hamburger SVG -->
+        <svg class="hamburger-icon" viewBox="0 0 100 80" fill="#fff">
+            <rect width="100" height="14" rx="6"></rect>
+            <rect y="33" width="100" height="14" rx="6"></rect>
+            <rect y="66" width="100" height="14" rx="6"></rect>
+        </svg>
+    </button>
+    <img src="/ativoslogo.png" alt="Logotipo Ativos360" />
+</div>
+
+<!-- Menu lateral (offcanvas) incluído diretamente na página -->
+<div class="offcanvas offcanvas-start" tabindex="-1" id="sideMenu" aria-labelledby="sideMenuLabel">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="sideMenuLabel">Menu</h5>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Fechar"></button>
+    </div>
+    <div class="offcanvas-body">
+        <ul class="nav flex-column">
+            <li class="nav-item mb-2">
+                <a class="nav-link" asp-controller="Cliente" asp-action="Index">Painel do Cliente</a>
+            </li>
+            <li class="nav-item mb-2">
+                <a class="nav-link" asp-controller="AtivoFinanceiro" asp-action="Index">Os Meus Ativos</a>
+            </li>
+            <li class="nav-item mb-2">
+                <a class="nav-link" asp-controller="AtivoFinanceiro" asp-action="Create">Adicionar Ativo</a>
+            </li>
+
+            @if (User.Identity.IsAuthenticated)
+            {
+                <li class="nav-item mb-2">
+                    <a class="nav-link" asp-controller="Cliente" asp-action="Perfil">Perfil</a>
+                </li>
+                @if (!User.IsInRole("Admin"))
+                {
+                    <li class="nav-item mb-2">
+                        <a class="nav-link text-success" asp-controller="Account" asp-action="UpgradeToAdmin">Tornar-se Administrador</a>
+                    </li>
+                }
+                <li class="nav-item mt-4">
+                    <form method="post" asp-controller="Account" asp-action="Logout">
+                        <button type="submit" class="btn btn-outline-danger w-100">Terminar Sessão</button>
+                    </form>
+                </li>
+            }
+            else
+            {
+                <li class="nav-item mb-2">
+                    <a class="nav-link" asp-controller="Account" asp-action="Login">Login</a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a class="nav-link" asp-controller="Account" asp-action="Register">Registar</a>
+                </li>
+            }
+        </ul>
+    </div>
+</div>
+
+<!-- Conteúdo principal ajustado para a barra -->
+<div class="main-content container">
     <h1>Os meus Ativos Financeiros</h1>
 
     <!-- Container para alinhar os botões -->
@@ -85,7 +202,6 @@
                                 new { Value = "Fundo", Text = "Fundo de Investimento" },
                                 new { Value = "Imovel", Text = "Imóvel Arrendado" }
                             };
-
                             foreach (var tipoOption in tipos)
                             {
                                 if (ViewBag.Tipo == tipoOption.Value || (string.IsNullOrEmpty(ViewBag.Tipo) && tipoOption.Value == ""))
@@ -219,7 +335,7 @@
     </div>
 </div>
 
-<!-- Scripts para abrir/fechar o menu lateral -->
+<!-- Scripts para abrir/fechar o menu lateral de filtros -->
 <script>
     function openSidebar() {
         document.getElementById("filterSidebar").classList.add("open");
@@ -230,7 +346,7 @@
     }
 </script>
 
-<!-- Inclui Bootstrap JS para funcionalidades como alerts -->
+<!-- Inclui Bootstrap JS para funcionalidades como offcanvas e alerts -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
