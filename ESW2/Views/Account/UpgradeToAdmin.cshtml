@@ -123,6 +123,13 @@
         border-bottom: 1px solid #e9ecef;
         padding-bottom: 0.7rem;
         padding-top: 1.2rem;
+        background-color: #0d6efd; /* Fundo azul para o header */
+        color: #fff;
+    }
+
+    .offcanvas-header img {
+        height: 32px;
+        margin-right: 10px;
     }
 
     .menu-links .nav-link {
@@ -182,10 +189,11 @@
     <img src="/ativoslogo.png" alt="Logotipo Ativos360" />
 </div>
 
-<!-- Menu lateral (offcanvas) incluído diretamente na página, sem logotipo nem nome no topo -->
+<!-- Menu lateral (offcanvas) com só o logo e X branco, igual ao código fornecido -->
 <div class="offcanvas offcanvas-start" tabindex="-1" id="sideMenu" aria-labelledby="sideMenuLabel">
     <div class="offcanvas-header">
-        <button type="button" class="btn-close ms-auto" data-bs-dismiss="offcanvas" aria-label="Fechar"></button>
+        <img src="/ativoslogo.png" alt="Logotipo Ativos360">
+        <button type="button" class="btn-close btn-close-white ms-auto" data-bs-dismiss="offcanvas" aria-label="Fechar"></button>
     </div>
     <div class="offcanvas-body px-4">
         <ul class="nav flex-column menu-links">
