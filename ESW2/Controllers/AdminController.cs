@@ -12,26 +12,24 @@ namespace ESW2.Controllers
     public class AdminController : Controller
     {
         private readonly MyDbContext _context;
+
         public AdminController(MyDbContext context)
         {
             _context = context;
         }
 
-        // Alias Dashboard for login redirect
         [HttpGet]
         public IActionResult Dashboard()
         {
             return RedirectToAction(nameof(Index));
         }
 
-        // Main Dashboard
         [HttpGet]
         public IActionResult Index()
         {
             return View();
         }
 
-        // List and Add Banks
         [HttpGet]
         public IActionResult Banks()
         {
@@ -94,7 +92,6 @@ namespace ESW2.Controllers
             return RedirectToAction(nameof(Banks));
         }
 
-        // Settings GET
         [HttpGet]
         public IActionResult Settings()
         {
@@ -106,7 +103,6 @@ namespace ESW2.Controllers
             return View(vm);
         }
 
-        // Settings POST
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult UpdateSettings(AdminSettingsViewModel vm)
@@ -120,12 +116,27 @@ namespace ESW2.Controllers
             }
             return View("Settings", vm);
         }
+
+        // Relatório de Depósitos por Banco
+        [HttpGet]
+        public IActionResult RelatorioBancos()
+        {
+            var resultado = _context.deposito_prazos
+                .GroupBy(d => d.id_banco)
+                .Select(g => new 
+                {
+                    Banco = _context.bancos.FirstOrDefault(b => b.id_banco == g.Key).nome_banco,
+                    TotalDeposito = g.Sum(d => d.valor_deposito)
+                })
+                .ToList();
+
+            return View("RelatorioBancos", resultado);
+        }
     }
 
-    // Simple in-memory settings store
     public static class DefaultSettings
     {
         public static decimal CurrentInterestRate { get; set; } = 5.0M;
-        public static decimal CurrentTaxRate { get; set; } = 15.0M; // percentage
+        public static decimal CurrentTaxRate { get; set; } = 15.0M;
     }
 }

@@ -1,0 +1,25 @@
+﻿@model IEnumerable<dynamic>
+
+@{
+    ViewData["Title"] = "Relatório de Depósitos por Banco";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<table class="table table-bordered mt-3">
+    <thead>
+    <tr>
+        <th>Nome do Banco</th>
+        <th>Valor Total Depositado</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@item.Banco</td>
+            <td>@item.TotalDeposito</td>
+        </tr>
+    }
+    </tbody>
+</table>
