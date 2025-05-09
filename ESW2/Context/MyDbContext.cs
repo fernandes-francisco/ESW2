@@ -33,7 +33,7 @@ namespace ESW2.Context // Ensure this namespace is correct
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=Eng_Soft;Username=postgres;Password=123456789");
+                optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=Eng_Soft;Username=postgres;Password=2167");
             }
         }
         
