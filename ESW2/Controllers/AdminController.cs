@@ -89,6 +89,7 @@ namespace ESW2.Controllers
                 _context.bancos.Remove(banco);
                 await _context.SaveChangesAsync();
             }
+
             return RedirectToAction(nameof(Banks));
         }
 
@@ -114,25 +115,46 @@ namespace ESW2.Controllers
                 TempData["SuccessMessage"] = "Configurações atualizadas com sucesso!";
                 return RedirectToAction(nameof(Settings));
             }
+
             return View("Settings", vm);
         }
 
-        // Relatório de Depósitos por Banco
         [HttpGet]
-        public IActionResult RelatorioBancos()
+        public IActionResult RelatorioBancos(DateTime? dataInicio, DateTime? dataFim)
         {
-            var resultado = _context.deposito_prazos
-                .GroupBy(d => d.id_banco)
-                .Select(g => new 
+            // Definir intervalo padrão de 30 dias caso as datas não sejam fornecidas
+            if (!dataInicio.HasValue) dataInicio = DateTime.Today.AddDays(-30);
+            if (!dataFim.HasValue) dataFim = DateTime.Today;
+
+            // Converter datas para DateOnly para fazer a comparação
+            var dataInicioOnly = DateOnly.FromDateTime(dataInicio.Value);
+            var dataFimOnly = DateOnly.FromDateTime(dataFim.Value);
+
+            // Consulta considerando a data de início do ativo financeiro associado ao depósito
+            var resultado = (from af in _context.ativo_financeiros
+                join dp in _context.deposito_prazos on af.id_deposito equals dp.id_deposito
+                join b in _context.bancos on dp.id_banco equals b.id_banco
+                where af.data_inicio >= dataInicioOnly && af.data_inicio <= dataFimOnly
+                group new { dp, b } by new { dp.id_banco, b.nome_banco } into g
+                select new
                 {
-                    Banco = _context.bancos.FirstOrDefault(b => b.id_banco == g.Key).nome_banco,
-                    TotalDeposito = g.Sum(d => d.valor_deposito)
-                })
-                .ToList();
+                    Banco = g.Key.nome_banco,
+                    TotalDeposito = g.Sum(x => x.dp.valor_deposito),
+                    CustoTotalJuros = g.Sum(x => x.dp.valor_deposito * (x.dp.taxa_juro_anual / 100))
+                }).ToList();
+
+            // Passar as datas para a View para reutilização
+            ViewBag.DataInicio = dataInicio.Value.ToString("yyyy-MM-dd");
+            ViewBag.DataFim = dataFim.Value.ToString("yyyy-MM-dd");
 
             return View("RelatorioBancos", resultado);
         }
+
+
+
+
     }
+
 
     public static class DefaultSettings
     {
