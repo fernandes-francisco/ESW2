@@ -67,88 +67,104 @@ namespace ESW2.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index(string nome, string tipo, decimal? montanteAplicado)
-        {
-            var clienteId = await GetCurrentClienteId();
-            if (clienteId == null)
+public async Task<IActionResult> Index(string nome, string tipo, decimal? montanteAplicado, bool? somenteAtivosAtuais)
+{
+    var clienteId = await GetCurrentClienteId();
+    if (clienteId == null)
+    {
+        return Unauthorized("Perfil de cliente não encontrado ou utilizador não autenticado.");
+    }
+
+    var hoje = DateOnly.FromDateTime(DateTime.Today);
+
+    var ativosQuery = _context.ativo_financeiros
+        .Where(a => a.id_cliente == clienteId.Value)
+        .Include(a => a.id_depositoNavigation).ThenInclude(d => d.id_bancoNavigation)
+        .Include(a => a.id_fundoNavigation)
+        .Include(a => a.id_imovelNavigation)
+        .AsQueryable();
+
+    // Aplicar filtro de ativos na data atual se o checkbox estiver marcado
+    if (somenteAtivosAtuais == true)
+    {
+        ativosQuery = ativosQuery
+            .Where(a => a.estado == estado_ativo.Ativo)
+            .Where(a => a.data_inicio.AddMonths(a.duracao_meses) >= hoje);
+    }
+
+    // Filtros existentes
+    if (!string.IsNullOrEmpty(tipo))
+    {
+        if (tipo == "Deposito") ativosQuery = ativosQuery.Where(a => a.id_deposito.HasValue);
+        else if (tipo == "Fundo") ativosQuery = ativosQuery.Where(a => a.id_fundo.HasValue);
+        else if (tipo == "Imovel") ativosQuery = ativosQuery.Where(a => a.id_imovel.HasValue);
+    }
+
+    if (!string.IsNullOrEmpty(nome))
+    {
+        ativosQuery = ativosQuery.Where(a =>
+            (a.id_deposito.HasValue && (
+                a.id_depositoNavigation.id_bancoNavigation.nome_banco.Contains(nome) ||
+                a.id_depositoNavigation.numero_conta_banco.Contains(nome))) ||
+            (a.id_fundo.HasValue && a.id_fundoNavigation.nome.Contains(nome)) ||
+            (a.id_imovel.HasValue && a.id_imovelNavigation.designacao.Contains(nome)));
+    }
+
+    if (montanteAplicado.HasValue)
+    {
+        var fundosFiltrados = _context.fundo_investimentos
+            .Where(fi => fi.valor_investido == (double)montanteAplicado.Value)
+            .Select(fi => fi.id_fundo);
+
+        var depositosFiltrados = _context.deposito_prazos
+            .Where(dp => dp.valor_deposito == (double)montanteAplicado.Value)
+            .Select(dp => dp.id_deposito);
+
+        ativosQuery = ativosQuery.Where(af =>
+            (af.id_fundo.HasValue && fundosFiltrados.Contains(af.id_fundo.Value)) ||
+            (af.id_deposito.HasValue && depositosFiltrados.Contains(af.id_deposito.Value)));
+    }
+
+    // Aplicar ordenação
+    List<ativo_financeiro> ativos;
+    if (somenteAtivosAtuais == true)
+    {
+        // Ordenar por valor inicial (decrescente) quando o filtro de data atual está ativo
+        ativos = await ativosQuery
+            .Select(a => new
             {
-                return Unauthorized("Perfil de cliente não encontrado ou utilizador não autenticado.");
-            }
+                Ativo = a,
+                ValorInicial = a.id_deposito.HasValue ? a.id_depositoNavigation.valor_deposito :
+                               a.id_fundo.HasValue ? a.id_fundoNavigation.valor_investido :
+                               a.id_imovel.HasValue ? a.id_imovelNavigation.valor_imovel : 0.0
+            })
+            .OrderByDescending(x => x.ValorInicial)
+            .Select(x => x.Ativo)
+            .AsNoTracking()
+            .ToListAsync();
+    }
+    else
+    {
+        // Ordenação padrão por data_inicio (decrescente) quando o filtro não está ativo
+        ativos = await ativosQuery
+            .OrderByDescending(a => a.data_inicio)
+            .AsNoTracking()
+            .ToListAsync();
+    }
 
-            // Consulta inicial para ativos financeiros do cliente
-            var ativosQuery = _context.ativo_financeiros
-                .Where(a => a.id_cliente == clienteId.Value)
-                .Include(a => a.id_depositoNavigation)
-                    .ThenInclude(d => d.id_bancoNavigation)
-                .Include(a => a.id_fundoNavigation)
-                .Include(a => a.id_imovelNavigation)
-                .AsQueryable();
+    // Passar os critérios de pesquisa para a view
+    ViewBag.Nome = nome;
+    ViewBag.Tipo = tipo;
+    ViewBag.MontanteAplicado = montanteAplicado;
+    ViewBag.SomenteAtivosAtuais = somenteAtivosAtuais;
 
-            // Filtrar por tipo, se fornecido
-            if (!string.IsNullOrEmpty(tipo))
-            {
-                if (tipo == "Deposito")
-                {
-                    ativosQuery = ativosQuery.Where(a => a.id_deposito.HasValue);
-                }
-                else if (tipo == "Fundo")
-                {
-                    ativosQuery = ativosQuery.Where(a => a.id_fundo.HasValue);
-                }
-                else if (tipo == "Imovel")
-                {
-                    ativosQuery = ativosQuery.Where(a => a.id_imovel.HasValue);
-                }
-            }
+    // Mensagens de sucesso/erro/info
+    ViewBag.SuccessMessage = TempData["SuccessMessage"];
+    ViewBag.ErrorMessage = TempData["ErrorMessage"];
+    ViewBag.InfoMessage = TempData["InfoMessage"];
 
-            // Filtrar por nome, se fornecido
-            if (!string.IsNullOrEmpty(nome))
-            {
-                ativosQuery = ativosQuery.Where(a =>
-                    (a.id_deposito.HasValue && (
-                        a.id_depositoNavigation.id_bancoNavigation.nome_banco.Contains(nome) ||
-                        a.id_depositoNavigation.numero_conta_banco.Contains(nome))) ||
-                    (a.id_fundo.HasValue && a.id_fundoNavigation.nome.Contains(nome)) ||
-                    (a.id_imovel.HasValue && a.id_imovelNavigation.designacao.Contains(nome)));
-            }
-
-            // Filtrar por montante aplicado (apenas para fundos de investimento e depósitos)
-            if (montanteAplicado.HasValue)
-            {
-                // Filtrar fundos de investimento
-                var fundosFiltrados = _context.fundo_investimentos
-                    .Where(fi => fi.valor_investido == (double)montanteAplicado.Value)
-                    .Select(fi => fi.id_fundo);
-
-                // Filtrar depósitos a prazo
-                var depositosFiltrados = _context.deposito_prazos
-                    .Where(dp => dp.valor_deposito == (double)montanteAplicado.Value)
-                    .Select(dp => dp.id_deposito);
-
-                // Aplicar filtro aos ativos financeiros
-                ativosQuery = ativosQuery.Where(af =>
-                    (af.id_fundo.HasValue && fundosFiltrados.Contains(af.id_fundo.Value)) ||
-                    (af.id_deposito.HasValue && depositosFiltrados.Contains(af.id_deposito.Value)));
-            }
-
-            // Executar a consulta
-            var ativos = await ativosQuery
-                .OrderByDescending(a => a.data_inicio)
-                .AsNoTracking()
-                .ToListAsync();
-
-            // Passar os critérios de pesquisa para a view (para preencher os campos do formulário)
-            ViewBag.Nome = nome;
-            ViewBag.Tipo = tipo;
-            ViewBag.MontanteAplicado = montanteAplicado;
-
-            // Mensagens de sucesso/erro/info
-            ViewBag.SuccessMessage = TempData["SuccessMessage"];
-            ViewBag.ErrorMessage = TempData["ErrorMessage"];
-            ViewBag.InfoMessage = TempData["InfoMessage"];
-
-            return View(ativos);
-        }
+    return View(ativos);
+}
 
         [HttpGet]
         public async Task<IActionResult> Details(int? id)
@@ -212,191 +228,249 @@ namespace ESW2.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(
-            [Bind("data_inicio,duracao_meses,percentual_imposto,id_fundo,id_imovel,id_deposito,estado")] ativo_financeiro ativo,
-            string tipoAtivo,
-            int? id_banco_novo = null, string numero_conta_banco_novo = null, string titulares_novo = null, double? valor_deposito_novo = null, double? taxa_juro_anual_novo = null,
-            string nome_fundo_novo = null, double? valor_investido_novo = null, double? taxa_juro_padrao_novo = null,
-            string designacao_nova = null, string localizacao_nova = null, double? valor_imovel_novo = null, double? valor_renda_nova = null,
-            double? valor_mensal_cond_novo = null, double? valor_anual_despesas_novo = null)
+[ValidateAntiForgeryToken]
+public async Task<IActionResult> Create(
+    [Bind("data_inicio,duracao_meses,percentual_imposto,id_fundo,id_imovel,id_deposito,estado")] ativo_financeiro ativo,
+    string tipoAtivo,
+    int? id_banco_novo = null, string numero_conta_banco_novo = null, string titulares_novo = null, double? valor_deposito_novo = null, double? taxa_juro_anual_novo = null,
+    string nome_fundo_novo = null, double? valor_investido_novo = null, double? taxa_juro_padrao_novo = null,
+    string designacao_nova = null, string localizacao_nova = null, double? valor_imovel_novo = null, double? valor_renda_nova = null,
+    double? valor_mensal_cond_novo = null, double? valor_anual_despesas_novo = null)
+{
+    // Log para depuração
+    Console.WriteLine($"tipoAtivo recebido no POST: {tipoAtivo ?? "null"}");
+
+    var clienteId = await GetCurrentClienteId();
+    if (clienteId == null)
+    {
+        ModelState.AddModelError("", "Não foi possível identificar o cliente. Inicie sessão novamente.");
+        await ReloadCreateViewData(tipoAtivo);
+        return View(ativo);
+    }
+
+    ativo.id_cliente = clienteId.Value;
+    ativo.id_admin = null;
+
+    if (ativo.data_inicio == default) ativo.data_inicio = DateOnly.FromDateTime(DateTime.Today);
+    if (ativo.estado == default) ativo.estado = estado_ativo.Ativo;
+    if (ativo.duracao_meses <= 0) ModelState.AddModelError("duracao_meses", "A duração em meses deve ser um número positivo.");
+    if (ativo.percentual_imposto < 0) ModelState.AddModelError("percentual_imposto", "O percentual de imposto não pode ser negativo.");
+
+    try
+    {
+        if (tipoAtivo == "Deposito")
         {
-            var clienteId = await GetCurrentClienteId();
-            if (clienteId == null)
+            Console.WriteLine("Processando Depósito...");
+            ativo.id_fundo = null;
+            ativo.id_imovel = null;
+
+            if (!ativo.id_deposito.HasValue && id_banco_novo.HasValue && !string.IsNullOrEmpty(numero_conta_banco_novo))
             {
-                ModelState.AddModelError("", "Não foi possível identificar o cliente. Inicie sessão novamente.");
-                await ReloadCreateViewData(tipoAtivo);
-                return View(ativo);
-            }
-
-            ativo.id_cliente = clienteId.Value;
-            ativo.id_admin = null;
-
-            if (ativo.data_inicio == default) ativo.data_inicio = DateOnly.FromDateTime(DateTime.Today);
-            if (ativo.estado == default) ativo.estado = estado_ativo.Ativo;
-            if (ativo.duracao_meses <= 0) ModelState.AddModelError("duracao_meses", "A duração em meses deve ser um número positivo.");
-            if (ativo.percentual_imposto < 0) ModelState.AddModelError("percentual_imposto", "O percentual de imposto não pode ser negativo.");
-
-            try
-            {
-                if (tipoAtivo == "Deposito")
+                var banco = await _context.bancos.FindAsync(id_banco_novo.Value);
+                if (banco == null)
                 {
-                    ativo.id_fundo = null;
-                    ativo.id_imovel = null;
-
-                    if (!ativo.id_deposito.HasValue && id_banco_novo.HasValue && !string.IsNullOrEmpty(numero_conta_banco_novo))
-                    {
-                        var banco = await _context.bancos.FindAsync(id_banco_novo.Value);
-                        if (banco == null) { ModelState.AddModelError("id_banco_novo", "O banco selecionado para o novo depósito não existe."); }
-                        else
-                        {
-                            var novoDeposito = new deposito_prazo
-                            {
-                                id_banco = id_banco_novo.Value,
-                                numero_conta_banco = numero_conta_banco_novo,
-                                titulares = titulares_novo ?? "N/A",
-                                valor_deposito = valor_deposito_novo ?? 0,
-                                taxa_juro_anual = taxa_juro_anual_novo ?? 0
-                            };
-                            _context.deposito_prazos.Add(novoDeposito);
-                            await _context.SaveChangesAsync();
-                            ativo.id_deposito = novoDeposito.id_deposito;
-                            Console.WriteLine($"Novo Depósito criado com ID: {novoDeposito.id_deposito}. Ativo FK set to: {ativo.id_deposito}");
-                        }
-                    }
-                    else if (ativo.id_deposito.HasValue && !await _context.deposito_prazos.AnyAsync(d => d.id_deposito == ativo.id_deposito.Value))
-                    { ModelState.AddModelError("id_deposito", "O depósito selecionado não foi encontrado."); }
-                    else if (!ativo.id_deposito.HasValue)
-                    { ModelState.AddModelError("id_deposito", "Deve preencher os campos para criar um novo depósito."); }
+                    ModelState.AddModelError("id_banco_novo", "O banco selecionado para o novo depósito não existe.");
                 }
-                else if (tipoAtivo == "Fundo")
+                else if (valor_deposito_novo == null || valor_deposito_novo <= 0)
                 {
-                    ativo.id_deposito = null;
-                    ativo.id_imovel = null;
-
-                    if (string.IsNullOrEmpty(nome_fundo_novo))
-                    {
-                        ModelState.AddModelError("nome_fundo_novo", "O nome do fundo é obrigatório.");
-                    }
-                    else
-                    {
-                        var novoFundo = new fundo_investimento
-                        {
-                            nome = nome_fundo_novo,
-                            valor_investido = valor_investido_novo ?? 0,
-                            taxa_juro_padrao = taxa_juro_padrao_novo ?? 0
-                        };
-                        _context.fundo_investimentos.Add(novoFundo);
-                        await _context.SaveChangesAsync();
-                        ativo.id_fundo = novoFundo.id_fundo;
-                        Console.WriteLine($"Novo Fundo criado com ID: {novoFundo.id_fundo}. Ativo FK set to: {ativo.id_fundo}");
-                    }
+                    ModelState.AddModelError("valor_deposito_novo", "O valor do depósito deve ser maior que zero.");
                 }
-                else if (tipoAtivo == "Imovel")
+                else if (string.IsNullOrEmpty(titulares_novo))
                 {
-                    ativo.id_deposito = null;
-                    ativo.id_fundo = null;
-
-                    if (!ativo.id_imovel.HasValue && !string.IsNullOrEmpty(designacao_nova) && !string.IsNullOrEmpty(localizacao_nova))
-                    {
-                        var novoImovel = new imovel_arrendado
-                        {
-                            designacao = designacao_nova,
-                            localizacao = localizacao_nova,
-                            valor_imovel = valor_imovel_novo ?? 0,
-                            valor_renda = valor_renda_nova ?? 0,
-                            valor_mensal_cond = valor_mensal_cond_novo ?? 0,
-                            valor_anual_despesas = valor_anual_despesas_novo ?? 0
-                        };
-                        _context.imovel_arrendados.Add(novoImovel);
-                        await _context.SaveChangesAsync();
-                        ativo.id_imovel = novoImovel.id_imovel;
-                        Console.WriteLine($"Novo Imovel criado com ID: {novoImovel.id_imovel}. Ativo FK set to: {ativo.id_imovel}");
-                    }
-                    else if (ativo.id_imovel.HasValue && !await _context.imovel_arrendados.AnyAsync(i => i.id_imovel == ativo.id_imovel.Value))
-                    { ModelState.AddModelError("id_imovel", "O imóvel selecionado não foi encontrado."); }
-                    else if (!ativo.id_imovel.HasValue)
-                    { ModelState.AddModelError("id_imovel", "Deve preencher os campos para criar um novo imóvel."); }
+                    ModelState.AddModelError("titulares_novo", "O campo titulares é obrigatório.");
                 }
                 else
                 {
-                    ModelState.AddModelError("", "Tipo de ativo inválido ou não selecionado.");
-                }
-            }
-            catch (DbUpdateException dbEx)
-            {
-                Console.WriteLine($"Erro ao salvar entidade relacionada ({tipoAtivo}): {dbEx.ToString()}");
-                ModelState.AddModelError("", $"Erro ao criar o novo {tipoAtivo}: {dbEx.InnerException?.Message ?? dbEx.Message}");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Erro inesperado ao processar entidade relacionada ({tipoAtivo}): {ex.ToString()}");
-                ModelState.AddModelError("", $"Erro inesperado ao processar o {tipoAtivo}: {ex.Message}");
-            }
-
-            int typeCount = (ativo.id_fundo.HasValue ? 1 : 0) +
-                            (ativo.id_imovel.HasValue ? 1 : 0) +
-                            (ativo.id_deposito.HasValue ? 1 : 0);
-
-            if (typeCount == 0 && ModelState.ErrorCount == 0)
-            { ModelState.AddModelError("", "Falha ao associar o ativo a um Fundo, Imóvel ou Depósito."); }
-            else if (typeCount > 1)
-            { ModelState.AddModelError("", "Erro interno: Tentativa de associar o ativo a múltiplos tipos de investimento."); }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    Console.WriteLine($"Tentando salvar Ativo Financeiro: Cliente={ativo.id_cliente}, Data={ativo.data_inicio}, Duracao={ativo.duracao_meses}, Imposto={ativo.percentual_imposto}%, Tipo={tipoAtivo}, DepositoId={ativo.id_deposito}, FundoId={ativo.id_fundo}, ImovelId={ativo.id_imovel}");
-
-                    _context.ativo_financeiros.Add(ativo);
-                    await _context.SaveChangesAsync();
-
-                    Console.WriteLine($"Ativo Financeiro salvo com ID: {ativo.id_ativo}");
-                    TempData["SuccessMessage"] = $"Ativo financeiro ({tipoAtivo}) inserido com sucesso!";
-                    return RedirectToAction("Create", new { tipoAtivo = tipoAtivo });
-                }
-                catch (DbUpdateException ex)
-                {
-                    Console.WriteLine($"DbUpdateException ao salvar AtivoFinanceiro: {ex.ToString()}");
-                    ModelState.AddModelError("", $"Não foi possível guardar o ativo financeiro. Verifique os dados. Detalhe: {ex.InnerException?.Message ?? ex.Message}");
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Exception ao salvar AtivoFinanceiro: {ex.ToString()}");
-                    ModelState.AddModelError("", $"Ocorreu um erro inesperado ao guardar o ativo: {ex.Message}");
-                }
-            }
-            else
-            {
-                Console.WriteLine("ModelState Inválido na criação:");
-                foreach (var state in ModelState)
-                {
-                    if (state.Value.Errors.Any())
+                    var novoDeposito = new deposito_prazo
                     {
-                        Console.WriteLine($"  Campo '{state.Key}': {string.Join("; ", state.Value.Errors.Select(e => e.ErrorMessage))}");
-                    }
+                        id_banco = id_banco_novo.Value,
+                        numero_conta_banco = numero_conta_banco_novo,
+                        titulares = titulares_novo,
+                        valor_deposito = valor_deposito_novo.Value,
+                        taxa_juro_anual = taxa_juro_anual_novo ?? 0
+                    };
+                    _context.deposito_prazos.Add(novoDeposito);
+                    await _context.SaveChangesAsync();
+                    ativo.id_deposito = novoDeposito.id_deposito;
+                    Console.WriteLine($"Novo Depósito criado com ID: {novoDeposito.id_deposito}");
                 }
             }
-
-            await ReloadCreateViewData(tipoAtivo);
-            ViewBag.id_banco_novo = id_banco_novo;
-            ViewBag.numero_conta_banco_novo = numero_conta_banco_novo;
-            ViewBag.titulares_novo = titulares_novo;
-            ViewBag.valor_deposito_novo = valor_deposito_novo;
-            ViewBag.taxa_juro_anual_novo = taxa_juro_anual_novo;
-            ViewBag.nome_fundo_novo = nome_fundo_novo;
-            ViewBag.valor_investido_novo = valor_investido_novo;
-            ViewBag.taxa_juro_padrao_novo = taxa_juro_padrao_novo;
-            ViewBag.designacao_nova = designacao_nova;
-            ViewBag.localizacao_nova = localizacao_nova;
-            ViewBag.valor_imovel_novo = valor_imovel_novo;
-            ViewBag.valor_renda_nova = valor_renda_nova;
-            ViewBag.valor_mensal_cond_novo = valor_mensal_cond_novo;
-            ViewBag.valor_anual_despesas_novo = valor_anual_despesas_novo;
-
-            return View(ativo);
+            else if (ativo.id_deposito.HasValue && !await _context.deposito_prazos.AnyAsync(d => d.id_deposito == ativo.id_deposito.Value))
+            {
+                ModelState.AddModelError("id_deposito", "O depósito selecionado não foi encontrado.");
+            }
+            else if (!ativo.id_deposito.HasValue)
+            {
+                ModelState.AddModelError("id_deposito", "Deve preencher os campos para criar um novo depósito.");
+            }
         }
+        else if (tipoAtivo == "Fundo")
+        {
+            Console.WriteLine("Processando Fundo...");
+            ativo.id_deposito = null;
+            ativo.id_imovel = null;
+
+            if (!ativo.id_fundo.HasValue && !string.IsNullOrEmpty(nome_fundo_novo))
+            {
+                if (valor_investido_novo == null || valor_investido_novo <= 0)
+                {
+                    ModelState.AddModelError("valor_investido_novo", "O valor investido deve ser maior que zero.");
+                }
+                else if (taxa_juro_padrao_novo == null || taxa_juro_padrao_novo < 0)
+                {
+                    ModelState.AddModelError("taxa_juro_padrao_novo", "A taxa de juro padrão não pode ser negativa.");
+                }
+                else
+                {
+                    var novoFundo = new fundo_investimento
+                    {
+                        nome = nome_fundo_novo,
+                        valor_investido = valor_investido_novo.Value,
+                        taxa_juro_padrao = taxa_juro_padrao_novo.Value
+                    };
+                    _context.fundo_investimentos.Add(novoFundo);
+                    await _context.SaveChangesAsync();
+                    ativo.id_fundo = novoFundo.id_fundo;
+                    Console.WriteLine($"Novo Fundo criado com ID: {novoFundo.id_fundo}");
+                }
+            }
+            else if (!ativo.id_fundo.HasValue)
+            {
+                ModelState.AddModelError("nome_fundo_novo", "Deve preencher os campos para criar um novo fundo.");
+            }
+        }
+        else if (tipoAtivo == "Imovel")
+        {
+            Console.WriteLine("Processando Imóvel...");
+            ativo.id_deposito = null;
+            ativo.id_fundo = null;
+
+            if (!ativo.id_imovel.HasValue && !string.IsNullOrEmpty(designacao_nova))
+            {
+                if (string.IsNullOrEmpty(localizacao_nova))
+                {
+                    ModelState.AddModelError("localizacao_nova", "A localização é obrigatória.");
+                }
+                else if (valor_imovel_novo == null || valor_imovel_novo <= 0)
+                {
+                    ModelState.AddModelError("valor_imovel_novo", "O valor do imóvel deve ser maior que zero.");
+                }
+                else
+                {
+                    var novoImovel = new imovel_arrendado
+                    {
+                        designacao = designacao_nova,
+                        localizacao = localizacao_nova,
+                        valor_imovel = valor_imovel_novo.Value,
+                        valor_renda = valor_renda_nova ?? 0,
+                        valor_mensal_cond = valor_mensal_cond_novo ?? 0,
+                        valor_anual_despesas = valor_anual_despesas_novo ?? 0
+                    };
+                    _context.imovel_arrendados.Add(novoImovel);
+                    await _context.SaveChangesAsync();
+                    ativo.id_imovel = novoImovel.id_imovel;
+                    Console.WriteLine($"Novo Imóvel criado com ID: {novoImovel.id_imovel}");
+                }
+            }
+            else if (!ativo.id_imovel.HasValue)
+            {
+                ModelState.AddModelError("designacao_nova", "Deve preencher os campos para criar um novo imóvel.");
+            }
+        }
+        else
+        {
+            ModelState.AddModelError("", $"Tipo de ativo inválido ou não selecionado: {tipoAtivo}");
+        }
+    }
+    catch (DbUpdateException dbEx)
+    {
+        Console.WriteLine($"Erro ao salvar entidade relacionada ({tipoAtivo}): {dbEx.ToString()}");
+        ModelState.AddModelError("", $"Erro ao criar o novo {tipoAtivo}: {dbEx.InnerException?.Message ?? dbEx.Message}");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Erro inesperado ao processar entidade relacionada ({tipoAtivo}): {ex.ToString()}");
+        ModelState.AddModelError("", $"Erro inesperado ao processar o {tipoAtivo}: {ex.Message}");
+    }
+
+    int typeCount = (ativo.id_fundo.HasValue ? 1 : 0) +
+                    (ativo.id_imovel.HasValue ? 1 : 0) +
+                    (ativo.id_deposito.HasValue ? 1 : 0);
+
+    if (typeCount == 0 && ModelState.ErrorCount == 0)
+    {
+        ModelState.AddModelError("", "Falha ao associar o ativo a um Fundo, Imóvel ou Depósito.");
+    }
+    else if (typeCount > 1)
+    {
+        ModelState.AddModelError("", "Erro interno: Tentativa de associar o ativo a múltiplos tipos de investimento.");
+    }
+
+    if (ModelState.IsValid)
+    {
+        try
+        {
+            Console.WriteLine($"Tentando salvar Ativo Financeiro: Cliente={ativo.id_cliente}, Data={ativo.data_inicio}, Duracao={ativo.duracao_meses}, Imposto={ativo.percentual_imposto}%, Tipo={tipoAtivo}, DepositoId={ativo.id_deposito}, FundoId={ativo.id_fundo}, ImovelId={ativo.id_imovel}");
+
+            _context.ativo_financeiros.Add(ativo);
+            await _context.SaveChangesAsync();
+
+            Console.WriteLine($"Ativo Financeiro salvo com ID: {ativo.id_ativo}");
+
+            // Mapear tipoAtivo para a versão com acentos corretos
+            string tipoAtivoFormatado = tipoAtivo switch
+            {
+                "Deposito" => "Depósito",
+                "Fundo" => "Fundo",
+                "Imovel" => "Imóvel",
+                _ => tipoAtivo
+            };
+
+            ViewBag.SuccessMessage = $"Ativo financeiro ({tipoAtivoFormatado}) inserido com sucesso!";
+            await ReloadCreateViewData(tipoAtivo);
+            return View(new ativo_financeiro());
+        }
+        catch (DbUpdateException ex)
+        {
+            Console.WriteLine($"DbUpdateException ao salvar AtivoFinanceiro: {ex.ToString()}");
+            ModelState.AddModelError("", $"Não foi possível guardar o ativo financeiro. Verifique os dados. Detalhe: {ex.InnerException?.Message ?? ex.Message}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Exception ao salvar AtivoFinanceiro: {ex.ToString()}");
+            ModelState.AddModelError("", $"Ocorreu um erro inesperado ao guardar o ativo: {ex.Message}");
+        }
+    }
+    else
+    {
+        Console.WriteLine("ModelState Inválido na criação:");
+        foreach (var state in ModelState)
+        {
+            if (state.Value.Errors.Any())
+            {
+                Console.WriteLine($"  Campo '{state.Key}': {string.Join("; ", state.Value.Errors.Select(e => e.ErrorMessage))}");
+            }
+        }
+    }
+
+    await ReloadCreateViewData(tipoAtivo);
+    ViewBag.id_banco_novo = id_banco_novo;
+    ViewBag.numero_conta_banco_novo = numero_conta_banco_novo;
+    ViewBag.titulares_novo = titulares_novo;
+    ViewBag.valor_deposito_novo = valor_deposito_novo;
+    ViewBag.taxa_juro_anual_novo = taxa_juro_anual_novo;
+    ViewBag.nome_fundo_novo = nome_fundo_novo;
+    ViewBag.valor_investido_novo = valor_investido_novo;
+    ViewBag.taxa_juro_padrao_novo = taxa_juro_padrao_novo;
+    ViewBag.designacao_nova = designacao_nova;
+    ViewBag.localizacao_nova = localizacao_nova;
+    ViewBag.valor_imovel_novo = valor_imovel_novo;
+    ViewBag.valor_renda_nova = valor_renda_nova;
+    ViewBag.valor_mensal_cond_novo = valor_mensal_cond_novo;
+    ViewBag.valor_anual_despesas_novo = valor_anual_despesas_novo;
+
+    return View(ativo);
+}
 
         [HttpGet]
         public async Task<IActionResult> Edit(int? id)

@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Os meus Ativos Financeiros";
+    ViewData["HideNavbar"] = true;
 }
 
 <!DOCTYPE html>
@@ -11,12 +12,76 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"]</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
     <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+            overflow: auto;
+        }
+        .top-bar {
+            width: 100%;
+            height: 60px;
+            background-color: #0d6efd;
+            display: flex;
+            align-items: center;
+            justify-content: space-between; /* Alinhar itens nas extremidades */
+            padding: 0 24px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1100;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+        }
+        .hamburger-btn {
+            background: none;
+            border: none;
+            margin-right: 18px;
+            padding: 8px 10px 8px 0;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+        .hamburger-btn:focus {
+            outline: none;
+        }
+        .hamburger-icon {
+            width: 28px;
+            height: 28px;
+            display: block;
+        }
+        .top-bar img {
+            height: 44px;
+            width: auto;
+            display: block;
+        }
+        .welcome-text {
+            color: #fff;
+            font-weight: 500;
+            font-size: 1.2rem; /* Tamanho do texto aumentado */
+            display: flex;
+            align-items: center;
+            gap: 8px; /* Espaço entre texto e ícone */
+        }
+        .welcome-text a {
+            color: #fff;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .welcome-text a:hover {
+            color: #e9ecef; /* Leve destaque ao passar o mouse */
+        }
+        .main-content {
+            margin-top: 70px;
+            padding-bottom: 20px;
+        }
         .sidebar {
             height: 100%;
             width: 0;
             position: fixed;
-            z-index: 1000;
+            z-index: 1200;
             top: 0;
             right: 0;
             background-color: #f8f9fa;
@@ -25,11 +90,9 @@
             padding-top: 60px;
             box-shadow: -2px 0 5px rgba(0,0,0,0.2);
         }
-
         .sidebar.open {
             width: 300px;
         }
-
         .sidebar .close-btn {
             position: absolute;
             top: 10px;
@@ -38,169 +101,294 @@
             cursor: pointer;
             color: #333;
         }
-
         .sidebar .filter-content {
             padding: 20px;
         }
-
         .sidebar .filter-content h4 {
             margin-bottom: 20px;
         }
-        
         .table-container {
             margin-top: 20px;
+        }
+        /* Estilos para o menu lateral estilizado */
+        .offcanvas-header {
+            border-bottom: 1px solid #e9ecef;
+            padding-bottom: 0.7rem;
+            padding-top: 1.2rem;
+            background-color: #0d6efd;
+            color: #fff;
+        }
+        .offcanvas-header img {
+            height: 32px;
+            margin-right: 10px;
+        }
+        .menu-links .nav-link {
+            color: #0d6efd;
+            border-radius: 8px;
+            transition: background 0.15s, color 0.15s;
+            padding: 12px 16px;
+            font-size: 1.12rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .menu-links .nav-link:hover, .menu-links .nav-link.active {
+            background: #e7f1ff;
+            color: #084298;
+            text-decoration: none;
+        }
+        .menu-links .nav-link.text-success {
+            color: #198754;
+        }
+        .menu-links .nav-link.text-success:hover {
+            background: #e9fbe7;
+            color: #146c43;
+        }
+        .btn-logout {
+            font-size: 1.1rem;
+            padding: 12px 0;
+            margin-top: 2.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+        .offcanvas-body {
+            padding-top: 2rem !important;
         }
     </style>
 </head>
 <body>
-    <div class="container mt-5">
-        <h1>Os meus Ativos Financeiros</h1>
+<!-- Barra azul com botão hamburger, logotipo e mensagem de boas-vindas com ícone de perfil -->
+<div class="top-bar">
+    <div class="d-flex align-items-center">
+        <button class="hamburger-btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#sideMenu" aria-controls="sideMenu" aria-label="Abrir menu">
+            <svg class="hamburger-icon" viewBox="0 0 100 80" fill="#fff">
+                <rect width="100" height="14" rx="6"></rect>
+                <rect y="33" width="100" height="14" rx="6"></rect>
+                <rect y="66" width="100" height="14" rx="6"></rect>
+            </svg>
+        </button>
+        <img src="/ativoslogo.png" alt="Logotipo Ativos360" />
+    </div>
+    <div class="welcome-text">
+        Bem-vindo, <a href="@Url.Action("Perfil", "Cliente")" title="Aceder ao Perfil">@User.Identity.Name</a>
+        <a href="@Url.Action("Perfil", "Cliente")" title="Aceder ao Perfil">
+            <i class="bi bi-person-circle"></i>
+        </a>
+    </div>
+</div>
 
-        <!-- Container para alinhar os botões -->
-        <div class="d-flex gap-2 mb-3">
-            <!-- Botão "Inserir Novo Ativo" -->
-            <a asp-action="Create" class="btn btn-primary">Inserir Novo Ativo</a>
-            <!-- Botão "Pesquisar" ao lado -->
-            <button class="btn btn-primary" onclick="openSidebar()">Pesquisar</button>
-        </div>
+<!-- Menu lateral (offcanvas) com só o logo e X branco -->
+<div class="offcanvas offcanvas-start" tabindex="-1" id="sideMenu" aria-labelledby="sideMenuLabel">
+    <div class="offcanvas-header">
+        <img src="/ativoslogo.png" alt="Logotipo Ativos360">
+        <button type="button" class="btn-close btn-close-white ms-auto" data-bs-dismiss="offcanvas" aria-label="Fechar"></button>
+    </div>
+    <div class="offcanvas-body px-4">
+        <ul class="nav flex-column menu-links">
+            <li class="nav-item mb-2">
+                <a class="nav-link" asp-controller="Cliente" asp-action="Index">
+                    <i class="bi bi-house-door"></i>Painel do Cliente
+                </a>
+            </li>
+            <li class="nav-item mb-2">
+                <a class="nav-link" asp-controller="AtivoFinanceiro" asp-action="Index">
+                    <i class="bi bi-wallet2"></i>Os Meus Ativos
+                </a>
+            </li>
+            <li class="nav-item mb-2">
+                <a class="nav-link" asp-controller="AtivoFinanceiro" asp-action="Create">
+                    <i class="bi bi-plus-circle"></i>Adicionar Ativo
+                </a>
+            </li>
+            <li class="nav-item mb-2">
+                <a class="nav-link" asp-controller="Cliente" asp-action="Perfil">
+                    <i class="bi bi-person"></i>Perfil
+                </a>
+            </li>
+            @if (User.Identity.IsAuthenticated && !User.IsInRole("Admin"))
+            {
+                <li class="nav-item mb-2">
+                    <a class="nav-link text-success" asp-controller="Account" asp-action="UpgradeToAdmin">
+                        <i class="bi bi-shield-lock"></i>Tornar-se Administrador
+                    </a>
+                </li>
+            }
+        </ul>
+        <form method="post" asp-controller="Account" asp-action="Logout">
+            <button type="submit" class="btn btn-danger btn-logout w-100 mt-4">
+                <i class="bi bi-box-arrow-right me-2"></i>Terminar Sessão
+            </button>
+        </form>
+    </div>
+</div>
 
-        <!-- Menu lateral com os filtros -->
-        <div id="filterSidebar" class="sidebar">
-            <span class="close-btn" onclick="closeSidebar()">×</span>
-            <div class="filter-content">
-                <h4>Filtros de Pesquisa</h4>
-                <form asp-action="Index" method="get">
-                    <div class="mb-3">
-                        <label for="nome" class="form-label">Nome</label>
-                        <input type="text" class="form-control" id="nome" name="nome" value="@ViewBag.Nome" placeholder="Ex.: Banco X ou Fundo A" />
-                    </div>
-                    <div class="mb-3">
-                        <label for="tipo" class="form-label">Tipo</label>
-                        <select class="form-select" id="tipo" name="tipo">
-                            @{
-                                var tipos = new[]
+<!-- Conteúdo principal ajustado para a barra -->
+<div class="main-content container">
+    <h1>Os meus Ativos Financeiros</h1>
+    <div class="d-flex gap-2 mb-3">
+        <a asp-action="Create" class="btn btn-primary">Inserir Novo Ativo</a>
+        <button class="btn btn-primary" onclick="openSidebar()">Pesquisar</button>
+    </div>
+    <div id="filterSidebar" class="sidebar">
+        <span class="close-btn" onclick="closeSidebar()">×</span>
+        <div class="filter-content">
+            <h4>Filtros de Pesquisa</h4>
+            <form asp-action="Index" method="get">
+                <div class="mb-3">
+                    <label for="nome" class="form-label">Nome</label>
+                    <input type="text" class="form-control" id="nome" name="nome" value="@ViewBag.Nome" placeholder="Ex.: Banco X ou Fundo A" />
+                </div>
+                <div class="mb-3">
+                    <label for="tipo" class="form-label">Tipo</label>
+                    <select class="form-select" id="tipo" name="tipo">
+                        @{
+                            var tipos = new[]
+                            {
+                                new { Value = "", Text = "Todos" },
+                                new { Value = "Deposito", Text = "Depósito a Prazo" },
+                                new { Value = "Fundo", Text = "Fundo de Investimento" },
+                                new { Value = "Imovel", Text = "Imóvel Arrendado" }
+                            };
+                            foreach (var tipoOption in tipos)
+                            {
+                                if (ViewBag.Tipo == tipoOption.Value || (string.IsNullOrEmpty(ViewBag.Tipo) && tipoOption.Value == ""))
                                 {
-                                    new { Value = "", Text = "Todos" },
-                                    new { Value = "Deposito", Text = "Depósito a Prazo" },
-                                    new { Value = "Fundo", Text = "Fundo de Investimento" },
-                                    new { Value = "Imovel", Text = "Imóvel Arrendado" }
-                                };
-
-                                foreach (var tipoOption in tipos)
+                                    <option value="@tipoOption.Value" selected>@tipoOption.Text</option>
+                                }
+                                else
                                 {
-                                    if (ViewBag.Tipo == tipoOption.Value || (string.IsNullOrEmpty(ViewBag.Tipo) && tipoOption.Value == ""))
-                                    {
-                                        <option value="@tipoOption.Value" selected>@tipoOption.Text</option>
-                                    }
-                                    else
-                                    {
-                                        <option value="@tipoOption.Value">@tipoOption.Text</option>
-                                    }
+                                    <option value="@tipoOption.Value">@tipoOption.Text</option>
                                 }
                             }
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="montanteAplicado" class="form-label">Montante Aplicado</label>
-                        <input type="number" class="form-control" id="montanteAplicado" name="montanteAplicado" value="@ViewBag.MontanteAplicado" placeholder="Ex.: 1000" step="0.01" />
-                    </div>
-                    <button type="submit" class="btn btn-primary" onclick="closeSidebar()">Pesquisar</button>
-                </form>
-            </div>
-        </div>
-
-        <!-- Exibir mensagens de sucesso/erro/info -->
-        @if (ViewBag.SuccessMessage != null)
-        {
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <strong>Sucesso!</strong> @ViewBag.SuccessMessage
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        }
-        @if (ViewBag.ErrorMessage != null)
-        {
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <strong>Erro!</strong> @ViewBag.ErrorMessage
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        }
-        @if (ViewBag.InfoMessage != null)
-        {
-            <div class="alert alert-info alert-dismissible fade show" role="alert">
-                <strong>Info!</strong> @ViewBag.InfoMessage
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        }
-
-        <!-- Tabela de resultados -->
-        <div class="table-container">
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>Nome</th>
-                        <th>Data Início</th>
-                        <th>Duração (meses)</th>
-                        <th>Imposto (%)</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @if (Model != null && Model.Any())
-                    {
-                        @foreach (var ativo in Model)
-                        {
-                            <tr>
-                                <td>
-                                    @if (ativo.id_deposito.HasValue)
-                                    {
-                                        @(ativo.id_depositoNavigation?.id_bancoNavigation?.nome_banco + " - " + ativo.id_depositoNavigation?.numero_conta_banco)
-                                    }
-                                    else if (ativo.id_fundo.HasValue)
-                                    {
-                                        @ativo.id_fundoNavigation?.nome
-                                    }
-                                    else if (ativo.id_imovel.HasValue)
-                                    {
-                                        @ativo.id_imovelNavigation?.designacao
-                                    }
-                                    else
-                                    {
-                                        @: Sem Nome
-                                    }
-                                </td>
-                                <td>@ativo.data_inicio.ToString("dd/MM/yyyy")</td>
-                                <td>@ativo.duracao_meses</td>
-                                <td>@ativo.percentual_imposto</td>
-                                <td>
-                                    <a asp-action="Edit" asp-route-id="@ativo.id_ativo" class="btn btn-sm btn-primary">Atualizar</a>
-                                    <a asp-action="Delete" asp-route-id="@ativo.id_ativo" class="btn btn-sm btn-danger">Apagar</a>
-                                </td>
-                            </tr>
                         }
-                    }
-                    else
-                    {
-                        <tr>
-                            <td colspan="5" class="text-center">Nenhum ativo financeiro encontrado.</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="montanteAplicado" class="form-label">Montante Aplicado</label>
+                    <input type="number" class="form-control" id="montanteAplicado" name="montanteAplicado" value="@ViewBag.MontanteAplicado" placeholder="Ex.: 1000" step="0.01" />
+                </div>
+                <div class="mb-3 form-check">
+                    <input type="checkbox" class="form-check-input" id="somenteAtivosAtuais" name="somenteAtivosAtuais" value="true" @(ViewBag.SomenteAtivosAtuais == true ? "checked" : "") />
+                    <label for="somenteAtivosAtuais" class="form-check-label">Somente Ativos na Data Atual</label>
+                </div>
+                <button type="submit" class="btn btn-primary" onclick="closeSidebar()">Pesquisar</button>
+            </form>
         </div>
     </div>
 
-    <!-- Scripts para abrir/fechar o menu lateral -->
-    <script>
-        function openSidebar() {
-            document.getElementById("filterSidebar").classList.add("open");
-        }
+    @if (ViewBag.SuccessMessage != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <strong>Sucesso!</strong> @ViewBag.SuccessMessage
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (ViewBag.ErrorMessage != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>Erro!</strong> @ViewBag.ErrorMessage
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (ViewBag.InfoMessage != null)
+    {
+        <div class="alert alert-info alert-dismissible fade show" role="alert">
+            <strong>Info!</strong> @ViewBag.InfoMessage
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
 
-        function closeSidebar() {
-            document.getElementById("filterSidebar").classList.remove("open");
-        }
-    </script>
+    <div class="table-container">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Tipo</th>
+                <th>Valor Inicial</th>
+                <th>Data Início</th>
+                <th>Duração (meses)</th>
+                <th>Imposto (%)</th>
+                <th>Ações</th>
+            </tr>
+            </thead>
+            <tbody>
+            @if (Model != null && Model.Any())
+            {
+                @foreach (var ativo in Model)
+                {
+                    <tr>
+                        <td>
+                            @if (ativo.id_deposito.HasValue)
+                            {
+                                @(ativo.id_depositoNavigation?.id_bancoNavigation?.nome_banco + " - " + ativo.id_depositoNavigation?.numero_conta_banco)
+                            }
+                            else if (ativo.id_fundo.HasValue)
+                            {
+                                @ativo.id_fundoNavigation?.nome
+                            }
+                            else if (ativo.id_imovel.HasValue)
+                            {
+                                @ativo.id_imovelNavigation?.designacao
+                            }
+                            else
+                            {
+                                @: Sem Nome
+                            }
+                        </td>
+                        <td>
+                            @if (ativo.id_deposito.HasValue) { <text>Depósito</text> }
+                            else if (ativo.id_fundo.HasValue) { <text>Fundo</text> }
+                            else if (ativo.id_imovel.HasValue) { <text>Imóvel</text> }
+                            else { <text>Outro</text> }
+                        </td>
+                        <td>
+                            @if (ativo.id_deposito.HasValue)
+                            {
+                                @ativo.id_depositoNavigation?.valor_deposito
+                            }
+                            else if (ativo.id_fundo.HasValue)
+                            {
+                                @ativo.id_fundoNavigation?.valor_investido
+                            }
+                            else if (ativo.id_imovel.HasValue)
+                            {
+                                @ativo.id_imovelNavigation?.valor_imovel
+                            }
+                            else
+                            {
+                                @: N/A
+                            }
+                        </td>
+                        <td>@ativo.data_inicio.ToString("dd/MM/yyyy")</td>
+                        <td>@ativo.duracao_meses</td>
+                        <td>@ativo.percentual_imposto</td>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@ativo.id_ativo" class="btn btn-sm btn-primary">Atualizar</a>
+                            <a asp-action="Delete" asp-route-id="@ativo.id_ativo" class="btn btn-sm btn-danger">Apagar</a>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="7" class="text-center">Nenhum ativo financeiro encontrado.</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>
 
-    <!-- Inclui Bootstrap JS para funcionalidades como alerts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    function openSidebar() {
+        document.getElementById("filterSidebar").classList.add("open");
+    }
+    function closeSidebar() {
+        document.getElementById("filterSidebar").classList.remove("open");
+    }
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

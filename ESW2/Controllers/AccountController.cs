@@ -6,23 +6,23 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ESW2.Context;
 using ESW2.Entities;
-using ESW2.Models; // Assuming ResetPasswordViewModel is here
-using Microsoft.Extensions.Logging; // Added for logging
-using System; // Added for Exception
+using ESW2.Models;
+using Microsoft.Extensions.Logging;
+using System;
 
 namespace ESW2.Controllers
 {
     public class AccountController : Controller
     {
         private readonly MyDbContext _context;
-        private readonly ILogger<AccountController> _logger; // Added logger
+        private readonly ILogger<AccountController> _logger;
         private const string AdminPassword = "es2"; // Fixed password for becoming admin
 
         // Inject DbContext and Logger
         public AccountController(MyDbContext context, ILogger<AccountController> logger)
         {
             _context = context;
-            _logger = logger; // Assign logger
+            _logger = logger;
         }
 
         // GET: /Account/Login
@@ -39,6 +39,13 @@ namespace ESW2.Controllers
         public async Task<IActionResult> Login(string username, string password, string returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
+
+            // Validate input
+            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
+            {
+                ViewData["ErrorMessage"] = "Por favor, preencha todos os campos.";
+                return View();
+            }
 
             // --- Security Warning: Plain Text Password ---
             // In a real application, NEVER compare plain text passwords.
@@ -76,7 +83,6 @@ namespace ESW2.Controllers
                 else
                 {
                     // Redirect non-admin (Cliente) to the Cliente area (ensure ClienteController/Index exists)
-                     // Check for returnUrl first if implementing redirection after login
                     if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
                     {
                         return Redirect(returnUrl);
@@ -90,30 +96,38 @@ namespace ESW2.Controllers
 
             // If login fails
             _logger.LogWarning("Failed login attempt for username: {Username}", username);
-            ModelState.AddModelError(string.Empty, "Credenciais inválidas!"); // Use ModelState for error messages
-            return View(); // Return the view with the error message
+            ViewData["ErrorMessage"] = "Nome de utilizador ou palavra-passe incorretos.";
+            return View();
         }
 
         // GET: /Account/Register
         [HttpGet]
         public IActionResult Register()
         {
-            // If using a ViewModel for registration, pass it here:
-            // return View(new RegisterViewModel());
             return View();
         }
 
         // POST: /Account/Register
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(string username, string email, string password)
+        public async Task<IActionResult> Register(string username, string email, string password, string nif, string morada)
         {
             // 1. Basic validation
-            if (string.IsNullOrWhiteSpace(username) 
-                || string.IsNullOrWhiteSpace(email) 
-                || string.IsNullOrWhiteSpace(password))
+            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
             {
                 ViewData["ErrorMessage"] = "Nome de utilizador, email e senha são obrigatórios.";
+                return View();
+            }
+
+            if (string.IsNullOrWhiteSpace(nif) || !System.Text.RegularExpressions.Regex.IsMatch(nif, @"^\d{9}$"))
+            {
+                ViewData["ErrorMessage"] = "O NIF é obrigatório e deve ter exatamente 9 dígitos numéricos.";
+                return View();
+            }
+
+            if (string.IsNullOrWhiteSpace(morada) || morada.Length > 200)
+            {
+                ViewData["ErrorMessage"] = "A morada é obrigatória e não pode ter mais de 200 caracteres.";
                 return View();
             }
 
@@ -146,8 +160,8 @@ namespace ESW2.Controllers
                     var newClientProfile = new utilizador_cliente
                     {
                         id_utilizador = newUser.id_utilizador,
-                        morada = null,
-                        nif = null
+                        morada = morada,
+                        nif = nif
                     };
                     _context.utilizador_clientes.Add(newClientProfile);
                     await _context.SaveChangesAsync();
@@ -166,9 +180,6 @@ namespace ESW2.Controllers
             }
         }
 
-        
-
-
         // GET: /Account/Logout
         public async Task<IActionResult> Logout()
         {
@@ -176,7 +187,6 @@ namespace ESW2.Controllers
             _logger.LogInformation("User logged out.");
             return RedirectToAction("Login"); // Redirect to Login page after logout
         }
-
 
         // GET: /Account/UpgradeToAdmin
         [HttpGet]
@@ -192,7 +202,7 @@ namespace ESW2.Controllers
         {
             if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(adminPassword))
             {
-                ModelState.AddModelError("", "Nome de utilizador e senha de admin são obrigatórios.");
+                ViewBag.ErrorMessage = "Nome de utilizador e palavra-passe de administrador são obrigatórios.";
                 return View();
             }
 
@@ -201,13 +211,13 @@ namespace ESW2.Controllers
 
             if (user == null)
             {
-                ModelState.AddModelError("", "Utilizador não encontrado!");
+                ViewBag.ErrorMessage = "Utilizador não encontrado!";
                 return View();
             }
 
             if (adminPassword != AdminPassword)
             {
-                ModelState.AddModelError("", "Senha de admin incorreta!");
+                ViewBag.ErrorMessage = "Palavra-passe de administrador incorreta! Por favor, utilize a palavra-passe específica fornecida pela equipa.";
                 return View();
             }
 
@@ -236,7 +246,6 @@ namespace ESW2.Controllers
             return View();
         }
 
-
         // GET: /Account/ForgotPassword
         [HttpGet]
         public IActionResult ForgotPassword()
@@ -251,8 +260,8 @@ namespace ESW2.Controllers
         {
             if (string.IsNullOrWhiteSpace(email))
             {
-                 ModelState.AddModelError("email", "O endereço de email é obrigatório.");
-                 return View();
+                ViewBag.ErrorMessage = "O endereço de email é obrigatório.";
+                return View();
             }
             return RedirectToAction("Login");
         }
@@ -261,7 +270,7 @@ namespace ESW2.Controllers
         [HttpGet]
         public IActionResult ResetPassword(string email, string token) // Token is simulated here
         {
-             if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(token))
+            if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(token))
             {
                 // In a real app, validate the token properly
                 TempData["ErrorMessage"] = "Link de redefinição inválido ou expirado.";
@@ -289,7 +298,7 @@ namespace ESW2.Controllers
 
             user.password = model.NovaSenha;
             await _context.SaveChangesAsync();
-             _logger.LogInformation("Password reset successfully for user associated with email: {Email}", model.Email);
+            _logger.LogInformation("Password reset successfully for user associated with email: {Email}", model.Email);
 
             TempData["SuccessMessage"] = "Senha redefinida com sucesso! Pode agora fazer login com a nova senha.";
             return RedirectToAction("Login");

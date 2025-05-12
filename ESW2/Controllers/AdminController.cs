@@ -12,26 +12,24 @@ namespace ESW2.Controllers
     public class AdminController : Controller
     {
         private readonly MyDbContext _context;
+
         public AdminController(MyDbContext context)
         {
             _context = context;
         }
 
-        // Alias Dashboard for login redirect
         [HttpGet]
         public IActionResult Dashboard()
         {
             return RedirectToAction(nameof(Index));
         }
 
-        // Main Dashboard
         [HttpGet]
         public IActionResult Index()
         {
             return View();
         }
 
-        // List and Add Banks
         [HttpGet]
         public IActionResult Banks()
         {
@@ -91,10 +89,10 @@ namespace ESW2.Controllers
                 _context.bancos.Remove(banco);
                 await _context.SaveChangesAsync();
             }
+
             return RedirectToAction(nameof(Banks));
         }
 
-        // Settings GET
         [HttpGet]
         public IActionResult Settings()
         {
@@ -106,7 +104,6 @@ namespace ESW2.Controllers
             return View(vm);
         }
 
-        // Settings POST
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult UpdateSettings(AdminSettingsViewModel vm)
@@ -118,14 +115,50 @@ namespace ESW2.Controllers
                 TempData["SuccessMessage"] = "Configurações atualizadas com sucesso!";
                 return RedirectToAction(nameof(Settings));
             }
+
             return View("Settings", vm);
         }
+
+        [HttpGet]
+        public IActionResult RelatorioBancos(DateTime? dataInicio, DateTime? dataFim)
+        {
+            // Definir intervalo padrão de 30 dias caso as datas não sejam fornecidas
+            if (!dataInicio.HasValue) dataInicio = DateTime.Today.AddDays(-30);
+            if (!dataFim.HasValue) dataFim = DateTime.Today;
+
+            // Converter datas para DateOnly para fazer a comparação
+            var dataInicioOnly = DateOnly.FromDateTime(dataInicio.Value);
+            var dataFimOnly = DateOnly.FromDateTime(dataFim.Value);
+
+            // Consulta considerando a data de início do ativo financeiro associado ao depósito
+            var resultado = (from af in _context.ativo_financeiros
+                join dp in _context.deposito_prazos on af.id_deposito equals dp.id_deposito
+                join b in _context.bancos on dp.id_banco equals b.id_banco
+                where af.data_inicio >= dataInicioOnly && af.data_inicio <= dataFimOnly
+                group new { dp, b } by new { dp.id_banco, b.nome_banco } into g
+                select new
+                {
+                    Banco = g.Key.nome_banco,
+                    TotalDeposito = g.Sum(x => x.dp.valor_deposito),
+                    CustoTotalJuros = g.Sum(x => x.dp.valor_deposito * (x.dp.taxa_juro_anual / 100))
+                }).ToList();
+
+            // Passar as datas para a View para reutilização
+            ViewBag.DataInicio = dataInicio.Value.ToString("yyyy-MM-dd");
+            ViewBag.DataFim = dataFim.Value.ToString("yyyy-MM-dd");
+
+            return View("RelatorioBancos", resultado);
+        }
+
+
+
+
     }
 
-    // Simple in-memory settings store
+
     public static class DefaultSettings
     {
         public static decimal CurrentInterestRate { get; set; } = 5.0M;
-        public static decimal CurrentTaxRate { get; set; } = 15.0M; // percentage
+        public static decimal CurrentTaxRate { get; set; } = 15.0M;
     }
 }
