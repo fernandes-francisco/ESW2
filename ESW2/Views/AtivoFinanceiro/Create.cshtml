@@ -7,176 +7,300 @@
     var bancos = ViewBag.Bancos as List<banco>;
 }
 
-<h2>@ViewData["Title"]</h2>
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+            overflow: auto;
+        }
 
-<!-- Exibir mensagem de sucesso no topo -->
-@if (ViewBag.SuccessMessage != null)
-{
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-        <strong>Sucesso!</strong> @ViewBag.SuccessMessage
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-}
+        /* Estilo para a barra azul no topo */
+        .top-bar {
+            width: 100%;
+            height: 70px; /* Altura baseada na imagem */
+            background-color: #0d6efd; /* Azul do Bootstrap */
+            display: flex;
+            align-items: center;
+            justify-content: space-between; /* Alinhar itens nas extremidades */
+            padding: 0 24px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1100;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+        }
 
-<!-- Exibir mensagens de erro -->
-<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        .hamburger-btn {
+            background: none;
+            border: none;
+            padding: 8px 10px 8px 0;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
 
-<!-- Exibir mensagens de erro -->
-@if (ViewBag.ErrorMessage != null)
-{
-    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        <strong>Erro!</strong> @ViewBag.ErrorMessage
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-}
+        .hamburger-btn:focus {
+            outline: none;
+        }
 
-<div class="mb-4">
-    <div class="btn-group w-100" role="group">
-        <a asp-action="Create" asp-route-tipoAtivo="Deposito" class="btn @(tipoAtivo == "Deposito" ? "btn-primary" : "btn-outline-primary")">Depósito a Prazo</a>
-        <a asp-action="Create" asp-route-tipoAtivo="Fundo" class="btn @(tipoAtivo == "Fundo" ? "btn-primary" : "btn-outline-primary")">Fundo de Investimento</a>
-        <a asp-action="Create" asp-route-tipoAtivo="Imovel" class="btn @(tipoAtivo == "Imovel" ? "btn-primary" : "btn-outline-primary")">Imóvel Arrendado</a>
+        .hamburger-icon {
+            width: 28px;
+            height: 28px;
+            display: block;
+        }
+
+        .top-bar img {
+            height: 190px;
+            width: auto;
+            display: block;
+        }
+
+        .welcome-text {
+            color: #fff;
+            font-weight: 500;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .welcome-text a {
+            color: #fff;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .welcome-text a:hover {
+            color: #e9ecef;
+        }
+
+        /* Ajuste para o conteúdo principal */
+        .main-content {
+            margin-top: 70px; /* Igual à altura da .top-bar */
+            padding: 20px;
+            min-height: calc(100vh - 70px); /* Ocupar toda a altura restante */
+        }
+
+        /* Estilo para o formulário */
+        .card-header {
+            background-color: #0d6efd;
+            color: #fff;
+        }
+
+        .btn-group .btn {
+            width: 33.33%; /* Dividir igualmente os botões */
+        }
+
+        .form-label {
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+<!-- Barra azul com botão hamburger, logotipo e mensagem de boas-vindas -->
+<div class="top-bar">
+    <button class="hamburger-btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#sideMenu" aria-controls="sideMenu" aria-label="Abrir menu">
+        <svg class="hamburger-icon" viewBox="0 0 100 80" fill="#fff">
+            <rect width="100" height="14" rx="6"></rect>
+            <rect y="33" width="100" height="14" rx="6"></rect>
+            <rect y="66" width="100" height="14" rx="6"></rect>
+        </svg>
+    </button>
+    <img src="/ativoslogo.png" alt="Logotipo Ativos360" />
+    <div class="welcome-text">
+        Bem-vindo, <a href="@Url.Action("Perfil", "Cliente")" title="Aceder ao Perfil">@User.Identity.Name</a>
+        <a href="@Url.Action("Perfil", "Cliente")" title="Aceder ao Perfil">
+            <i class="bi bi-person-circle"></i>
+        </a>
     </div>
 </div>
 
-<div class="mb-3">
-    <!-- Ajustar o botão para redirecionar para a página de ativos financeiros -->
-    <a asp-controller="AtivoFinanceiro" asp-action="Index" class="btn btn-secondary">Voltar</a>
+<!-- Conteúdo principal ajustado para a barra -->
+<div class="main-content">
+    <!-- Exibir mensagem de sucesso no topo -->
+    @if (ViewBag.SuccessMessage != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <strong>Sucesso!</strong> @ViewBag.SuccessMessage
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <!-- Exibir mensagens de erro -->
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <!-- Exibir mensagens de erro -->
+    @if (ViewBag.ErrorMessage != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>Erro!</strong> @ViewBag.ErrorMessage
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <h2>@ViewData["Title"]</h2>
+
+    <div class="mb-4">
+        <div class="btn-group w-100" role="group">
+            <a asp-action="Create" asp-route-tipoAtivo="Deposito" class="btn @(tipoAtivo == "Deposito" ? "btn-primary" : "btn-outline-primary")">Depósito a Prazo</a>
+            <a asp-action="Create" asp-route-tipoAtivo="Fundo" class="btn @(tipoAtivo == "Fundo" ? "btn-primary" : "btn-outline-primary")">Fundo de Investimento</a>
+            <a asp-action="Create" asp-route-tipoAtivo="Imovel" class="btn @(tipoAtivo == "Imovel" ? "btn-primary" : "btn-outline-primary")">Imóvel Arrendado</a>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <a asp-controller="AtivoFinanceiro" asp-action="Index" class="btn btn-secondary">Voltar</a>
+    </div>
+
+    <form asp-action="Create" method="post">
+        <input type="hidden" name="tipoAtivo" value="@tipoAtivo" />
+
+        <div class="mb-3">
+            <label asp-for="data_inicio" class="form-label">Data de Início:</label>
+            <input asp-for="data_inicio" type="date" class="form-control" value="@DateOnly.FromDateTime(DateTime.Today).ToString("yyyy-MM-dd")" />
+            <span asp-validation-for="data_inicio" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="duracao_meses" class="form-label">Duração (meses):</label>
+            <input asp-for="duracao_meses" type="number" class="form-control" min="1" required />
+            <span asp-validation-for="duracao_meses" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="percentual_imposto" class="form-label">Percentual de Imposto (%):</label>
+            <input asp-for="percentual_imposto" type="number" step="0.01" class="form-control" min="0" required />
+            <span asp-validation-for="percentual_imposto" class="text-danger"></span>
+        </div>
+
+        @if (tipoAtivo == "Deposito")
+        {
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Informações do Depósito a Prazo</h5>
+                </div>
+                <div class="card-body">
+                    @if (bancos != null && bancos.Any())
+                    {
+                        <div class="mb-3">
+                            <label class="form-label">Banco:</label>
+                            <select id="id_banco_novo" name="id_banco_novo" class="form-select" required>
+                                <option value="">-- Selecione um Banco --</option>
+                                @foreach (var banco in bancos)
+                                {
+                                    <option value="@banco.id_banco">@banco.nome_banco</option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Número da Conta:</label>
+                            <input type="text" id="numero_conta_banco_novo" name="numero_conta_banco_novo" class="form-control" required />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Titulares:</label>
+                            <input type="text" id="titulares_novo" name="titulares_novo" class="form-control" required />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Valor do Depósito:</label>
+                            <input type="number" id="valor_deposito_novo" name="valor_deposito_novo" step="0.01" class="form-control" min="0.01" required />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Taxa de Juro Anual (%):</label>
+                            <input type="number" id="taxa_juro_anual_novo" name="taxa_juro_anual_novo" step="0.01" class="form-control" min="0" />
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-info">
+                            Não existem bancos cadastrados. Adicione um banco primeiro.
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+        else if (tipoAtivo == "Fundo")
+        {
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Informações do Fundo de Investimento</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label">Nome do Fundo:</label>
+                        <input type="text" id="nome_fundo_novo" name="nome_fundo_novo" class="form-control" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Valor Investido:</label>
+                        <input type="number" id="valor_investido_novo" name="valor_investido_novo" step="0.01" class="form-control" min="0.01" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Taxa de Juro Padrão (%):</label>
+                        <input type="number" id="taxa_juro_padrao_novo" name="taxa_juro_padrao_novo" step="0.01" class="form-control" min="0" required />
+                    </div>
+                </div>
+            </div>
+        }
+        else if (tipoAtivo == "Imovel")
+        {
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Informações do Imóvel Arrendado</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label">Designação:</label>
+                        <input type="text" id="designacao_nova" name="designacao_nova" class="form-control" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Localização:</label>
+                        <input type="text" id="localizacao_nova" name="localizacao_nova" class="form-control" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Valor do Imóvel:</label>
+                        <input type="number" id="valor_imovel_novo" name="valor_imovel_novo" step="0.01" class="form-control" min="0.01" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Valor da Renda:</label>
+                        <input type="number" id="valor_renda_nova" name="valor_renda_nova" step="0.01" class="form-control" min="0" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Valor Mensal do Condomínio:</label>
+                        <input type="number" id="valor_mensal_cond_novo" name="valor_mensal_cond_novo" step="0.01" class="form-control" min="0" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Valor Anual de Despesas:</label>
+                        <input type="number" id="valor_anual_despesas_novo" name="valor_anual_despesas_novo" step="0.01" class="form-control" min="0" />
+                    </div>
+                </div>
+            </div>
+        }
+
+        <button type="submit" class="btn btn-primary mt-3">Inserir</button>
+    </form>
 </div>
 
-<form asp-action="Create" method="post">
-    <input type="hidden" name="tipoAtivo" value="@tipoAtivo" />
-
-    <div class="mb-3">
-        <label asp-for="data_inicio" class="form-label">Data de Início:</label>
-        <input asp-for="data_inicio" type="date" class="form-control" value="@DateOnly.FromDateTime(DateTime.Today).ToString("yyyy-MM-dd")" />
-        <span asp-validation-for="data_inicio" class="text-danger"></span>
-    </div>
-
-    <div class="mb-3">
-        <label asp-for="duracao_meses" class="form-label">Duração (meses):</label>
-        <input asp-for="duracao_meses" type="number" class="form-control" min="1" required />
-        <span asp-validation-for="duracao_meses" class="text-danger"></span>
-    </div>
-
-    <div class="mb-3">
-        <label asp-for="percentual_imposto" class="form-label">Percentual de Imposto (%):</label>
-        <input asp-for="percentual_imposto" type="number" step="0.01" class="form-control" min="0" required />
-        <span asp-validation-for="percentual_imposto" class="text-danger"></span>
-    </div>
-
-    @if (tipoAtivo == "Deposito")
-    {
-        <div class="card mb-4">
-            <div class="card-header bg-primary text-white">
-                <h5 class="mb-0">Informações do Depósito a Prazo</h5>
-            </div>
-            <div class="card-body">
-                @if (bancos != null && bancos.Any())
-                {
-                    <div class="mb-3">
-                        <label class="form-label">Banco:</label>
-                        <select id="id_banco_novo" name="id_banco_novo" class="form-select" required>
-                            <option value="">-- Selecione um Banco --</option>
-                            @foreach (var banco in bancos)
-                            {
-                                <option value="@banco.id_banco">@banco.nome_banco</option>
-                            }
-                        </select>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Número da Conta:</label>
-                        <input type="text" id="numero_conta_banco_novo" name="numero_conta_banco_novo" class="form-control" required />
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Titulares:</label>
-                        <input type="text" id="titulares_novo" name="titulares_novo" class="form-control" required />
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Valor do Depósito:</label>
-                        <input type="number" id="valor_deposito_novo" name="valor_deposito_novo" step="0.01" class="form-control" min="0.01" required />
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Taxa de Juro Anual (%):</label>
-                        <input type="number" id="taxa_juro_anual_novo" name="taxa_juro_anual_novo" step="0.01" class="form-control" min="0" />
-                    </div>
-                }
-                else
-                {
-                    <div class="alert alert-info">
-                        Não existem bancos cadastrados. Adicione um banco primeiro.
-                    </div>
-                }
-            </div>
-        </div>
-    }
-    else if (tipoAtivo == "Fundo")
-    {
-        <div class="card mb-4">
-            <div class="card-header bg-primary text-white">
-                <h5 class="mb-0">Informações do Fundo de Investimento</h5>
-            </div>
-            <div class="card-body">
-                <div class="mb-3">
-                    <label class="form-label">Nome do Fundo:</label>
-                    <input type="text" id="nome_fundo_novo" name="nome_fundo_novo" class="form-control" required />
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Valor Investido:</label>
-                    <input type="number" id="valor_investido_novo" name="valor_investido_novo" step="0.01" class="form-control" min="0.01" required />
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Taxa de Juro Padrão (%):</label>
-                    <input type="number" id="taxa_juro_padrao_novo" name="taxa_juro_padrao_novo" step="0.01" class="form-control" min="0" required />
-                </div>
-            </div>
-        </div>
-    }
-    else if (tipoAtivo == "Imovel")
-    {
-        <div class="card mb-4">
-            <div class="card-header bg-primary text-white">
-                <h5 class="mb-0">Informações do Imóvel Arrendado</h5>
-            </div>
-            <div class="card-body">
-                <div class="mb-3">
-                    <label class="form-label">Designação:</label>
-                    <input type="text" id="designacao_nova" name="designacao_nova" class="form-control" required />
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Localização:</label>
-                    <input type="text" id="localizacao_nova" name="localizacao_nova" class="form-control" required />
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Valor do Imóvel:</label>
-                    <input type="number" id="valor_imovel_novo" name="valor_imovel_novo" step="0.01" class="form-control" min="0.01" required />
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Valor da Renda:</label>
-                    <input type="number" id="valor_renda_nova" name="valor_renda_nova" step="0.01" class="form-control" min="0" />
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Valor Mensal do Condomínio:</label>
-                    <input type="number" id="valor_mensal_cond_novo" name="valor_mensal_cond_novo" step="0.01" class="form-control" min="0" />
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Valor Anual de Despesas:</label>
-                    <input type="number" id="valor_anual_despesas_novo" name="valor_anual_despesas_novo" step="0.01" class="form-control" min="0" />
-                </div>
-            </div>
-        </div>
-    }
-
-    <button type="submit" class="btn btn-primary mt-3">Inserir</button>
-</form>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
