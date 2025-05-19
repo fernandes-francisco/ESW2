@@ -1,6 +1,289 @@
 ﻿@{
     ViewData["Title"] = "Meu Perfil";
+    ViewData["HideNavbar"] = true;
 }
 
-<h2>Meu Perfil</h2>
-<p>Aqui você pode visualizar suas informações pessoais.</p>
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+            overflow: auto;
+        }
+        .top-bar {
+            width: 100%;
+            height: 60px;
+            background-color: #0d6efd;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1100;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+        }
+        .hamburger-btn {
+            background: none;
+            border: none;
+            margin-right: 18px;
+            padding: 8px 10px 8px 0;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+        .hamburger-btn:focus {
+            outline: none;
+        }
+        .hamburger-icon {
+            width: 28px;
+            height: 28px;
+            display: block;
+        }
+        .top-bar img {
+            height: 190px;
+            width: auto;
+            display: block;
+        }
+        .welcome-text {
+            color: #fff;
+            font-weight: 500;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .welcome-text a {
+            color: #fff;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .welcome-text a:hover {
+            color: #e9ecef;
+        }
+        .main-content {
+            margin-top: 70px;
+            padding-bottom: 20px;
+            min-height: calc(100vh - 70px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        /* Estilos para o menu lateral estilizado */
+        .offcanvas-header {
+            border-bottom: 1px solid #e9ecef;
+            padding-bottom: 0.7rem;
+            padding-top: 1.2rem;
+            background-color: #0d6efd;
+            color: #fff;
+        }
+        .offcanvas-header img {
+            height: 32px;
+            margin-right: 10px;
+        }
+        .menu-links .nav-link {
+            color: #0d6efd;
+            border-radius: 8px;
+            transition: background 0.15s, color 0.15s;
+            padding: 12px 16px;
+            font-size: 1.12rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .menu-links .nav-link:hover, .menu-links .nav-link.active {
+            background: #e7f1ff;
+            color: #084298;
+            text-decoration: none;
+        }
+        .menu-links .nav-link.text-success {
+            color: #198754;
+        }
+        .menu-links .nav-link.text-success:hover {
+            background: #e9fbe7;
+            color: #146c43;
+        }
+        .btn-logout {
+            font-size: 1.1rem;
+            padding: 12px 0;
+            margin-top: 2.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+        .offcanvas-body {
+            padding-top: 2rem !important;
+        }
+        /* Estilos para o perfil */
+        .profile-card {
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 800px;
+        }
+        .profile-body {
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+        }
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 500;
+            margin-bottom: 1rem;
+            width: 100%;
+            max-width: 800px;
+            align-self: flex-start;
+        }
+        .btn-back {
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            padding: 0.5rem 1.5rem;
+            border-radius: 5px;
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+            align-self: flex-start;
+            width: auto;
+        }
+        .btn-back:hover {
+            background-color: #5a6268;
+            color: white;
+        }
+        .content-wrapper {
+            width: 100%;
+            max-width: 800px;
+        }
+    </style>
+</head>
+<body>
+<!-- Barra azul com botão hamburger, logotipo e mensagem de boas-vindas com ícone de perfil -->
+<div class="top-bar">
+    <div class="d-flex align-items-center">
+        <button class="hamburger-btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#sideMenu" aria-controls="sideMenu" aria-label="Abrir menu">
+            <svg class="hamburger-icon" viewBox="0 0 100 80" fill="#fff">
+                <rect width="100" height="14" rx="6"></rect>
+                <rect y="33" width="100" height="14" rx="6"></rect>
+                <rect y="66" width="100" height="14" rx="6"></rect>
+            </svg>
+        </button>
+        <img src="/ativoslogo.png" alt="Logotipo Ativos360" />
+    </div>
+    <div class="welcome-text">
+        Bem-vindo, <a href="@Url.Action("Perfil", "Cliente")" title="Aceder ao Perfil">@User.Identity.Name</a>
+        <a href="@Url.Action("Perfil", "Cliente")" title="Aceder ao Perfil">
+            <i class="bi bi-person-circle"></i>
+        </a>
+    </div>
+</div>
+
+<!-- Menu lateral (offcanvas) da esquerda com só o logo e X branco -->
+<div class="offcanvas offcanvas-start" tabindex="-1" id="sideMenu" aria-labelledby="sideMenuLabel">
+    <div class="offcanvas-header">
+        <img src="/ativoslogo.png" alt="Logotipo Ativos360">
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Fechar"></button>
+    </div>
+    <div class="offcanvas-body px-4">
+        <ul class="nav flex-column menu-links">
+            <li class="nav-item mb-2">
+                <a class="nav-link" asp-controller="Cliente" asp-action="Index">
+                    <i class="bi bi-house-door"></i>Painel do Cliente
+                </a>
+            </li>
+            <li class="nav-item mb-2">
+                <a class="nav-link" asp-controller="AtivoFinanceiro" asp-action="Index">
+                    <i class="bi bi-wallet2"></i>Os Meus Ativos
+                </a>
+            </li>
+            <li class="nav-item mb-2">
+                <a class="nav-link" asp-controller="AtivoFinanceiro" asp-action="Create">
+                    <i class="bi bi-plus-circle"></i>Adicionar Ativo
+                </a>
+            </li>
+            <li class="nav-item mb-2">
+                <a class="nav-link active" asp-controller="Cliente" asp-action="Perfil">
+                    <i class="bi bi-person"></i>Perfil
+                </a>
+            </li>
+            @if (User.Identity.IsAuthenticated && !User.IsInRole("Admin"))
+            {
+                <li class="nav-item mb-2">
+                    <a class="nav-link text-success" asp-controller="Account" asp-action="UpgradeToAdmin">
+                        <i class="bi bi-shield-lock"></i>Tornar-se Administrador
+                    </a>
+                </li>
+            }
+        </ul>
+        <form method="post" asp-controller="Account" asp-action="Logout">
+            <button type="submit" class="btn btn-danger btn-logout w-100 mt-4">
+                <i class="bi bi-box-arrow-right me-2"></i>Terminar Sessão
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Conteúdo principal ajustado para a barra -->
+<div class="main-content container">
+    <div class="content-wrapper">
+        <h1 class="page-title">Meu Perfil</h1>
+        
+        <a asp-controller="Cliente" asp-action="Index" class="btn btn-back">
+            <i class="bi bi-arrow-left me-2"></i>Voltar
+        </a>
+
+        <div class="card profile-card">
+            <div class="profile-body">
+                <p class="lead">Aqui você pode visualizar as suas informações pessoais.</p>
+
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Nome de Utilizador</label>
+                            <p>@User.Identity.Name</p>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Email</label>
+                            <p>@User.FindFirst("Email")?.Value</p>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Tipo de Conta</label>
+                            <p>@(User.IsInRole("Admin") ? "Administrador" : "Cliente")</p>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Data de Registo</label>
+                            <p>@DateTime.Now.AddMonths(-3).ToString("dd/MM/yyyy")</p>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Total de Ativos</label>
+                            <p>3 ativos financeiros</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <a href="#" class="btn btn-success">Editar Perfil</a>
+                    <a href="#" class="btn btn-outline-secondary ms-2">Alterar Senha</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -27,7 +27,7 @@
             background-color: #0d6efd;
             display: flex;
             align-items: center;
-            justify-content: space-between; /* Alinhar itens nas extremidades */
+            justify-content: space-between;
             padding: 0 24px;
             position: fixed;
             top: 0;
@@ -60,10 +60,10 @@
         .welcome-text {
             color: #fff;
             font-weight: 500;
-            font-size: 1.2rem; /* Tamanho do texto aumentado */
+            font-size: 1.2rem;
             display: flex;
             align-items: center;
-            gap: 8px; /* Espaço entre texto e ícone */
+            gap: 8px;
         }
         .welcome-text a {
             color: #fff;
@@ -71,41 +71,11 @@
             transition: color 0.2s;
         }
         .welcome-text a:hover {
-            color: #e9ecef; /* Leve destaque ao passar o mouse */
+            color: #e9ecef;
         }
         .main-content {
             margin-top: 70px;
             padding-bottom: 20px;
-        }
-        .sidebar {
-            height: 100%;
-            width: 0;
-            position: fixed;
-            z-index: 1200;
-            top: 0;
-            right: 0;
-            background-color: #f8f9fa;
-            overflow-x: hidden;
-            transition: 0.5s;
-            padding-top: 60px;
-            box-shadow: -2px 0 5px rgba(0,0,0,0.2);
-        }
-        .sidebar.open {
-            width: 300px;
-        }
-        .sidebar .close-btn {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            font-size: 24px;
-            cursor: pointer;
-            color: #333;
-        }
-        .sidebar .filter-content {
-            padding: 20px;
-        }
-        .sidebar .filter-content h4 {
-            margin-bottom: 20px;
         }
         .table-container {
             margin-top: 20px;
@@ -117,6 +87,9 @@
             padding-top: 1.2rem;
             background-color: #0d6efd;
             color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         .offcanvas-header img {
             height: 32px;
@@ -155,6 +128,14 @@
         .offcanvas-body {
             padding-top: 2rem !important;
         }
+        /* Garantir que o X seja visível e posicionado corretamente */
+        .offcanvas-header .btn-close {
+            background-color: white;
+            opacity: 1;
+            margin-right: 0;
+            position: relative;
+            right: 0;
+        }
     </style>
 </head>
 <body>
@@ -178,11 +159,11 @@
     </div>
 </div>
 
-<!-- Menu lateral (offcanvas) com só o logo e X branco -->
+<!-- Menu lateral (offcanvas) da esquerda com só o logo e X branco -->
 <div class="offcanvas offcanvas-start" tabindex="-1" id="sideMenu" aria-labelledby="sideMenuLabel">
     <div class="offcanvas-header">
         <img src="/ativoslogo.png" alt="Logotipo Ativos360">
-        <button type="button" class="btn-close btn-close-white ms-auto" data-bs-dismiss="offcanvas" aria-label="Fechar"></button>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Fechar"></button>
     </div>
     <div class="offcanvas-body px-4">
         <ul class="nav flex-column menu-links">
@@ -223,58 +204,62 @@
     </div>
 </div>
 
+<!-- Menu lateral (offcanvas) da direita para filtros de pesquisa -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="filterSidebar" aria-labelledby="filterSidebarLabel">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="filterSidebarLabel">Filtros de Pesquisa</h5>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Fechar"></button>
+    </div>
+    <div class="offcanvas-body px-4">
+        <form asp-action="Index" method="get">
+            <div class="mb-3">
+                <label for="nome" class="form-label">Nome</label>
+                <input type="text" class="form-control" id="nome" name="nome" value="@ViewBag.Nome" placeholder="Ex.: Banco X ou Fundo A" />
+            </div>
+            <div class="mb-3">
+                <label for="tipo" class="form-label">Tipo</label>
+                <select class="form-select" id="tipo" name="tipo">
+                    @{
+                        var tipos = new[]
+                        {
+                            new { Value = "", Text = "Todos" },
+                            new { Value = "Deposito", Text = "Depósito a Prazo" },
+                            new { Value = "Fundo", Text = "Fundo de Investimento" },
+                            new { Value = "Imovel", Text = "Imóvel Arrendado" }
+                        };
+                        foreach (var tipoOption in tipos)
+                        {
+                            if (ViewBag.Tipo == tipoOption.Value || (string.IsNullOrEmpty(ViewBag.Tipo) && tipoOption.Value == ""))
+                            {
+                                <option value="@tipoOption.Value" selected>@tipoOption.Text</option>
+                            }
+                            else
+                            {
+                                <option value="@tipoOption.Value">@tipoOption.Text</option>
+                            }
+                        }
+                    }
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="montanteAplicado" class="form-label">Montante Aplicado</label>
+                <input type="number" class="form-control" id="montanteAplicado" name="montanteAplicado" value="@ViewBag.MontanteAplicado" placeholder="Ex.: 1000" step="0.01" />
+            </div>
+            <div class="mb-3 form-check">
+                <input type="checkbox" class="form-check-input" id="somenteAtivosAtuais" name="somenteAtivosAtuais" value="true" @(ViewBag.SomenteAtivosAtuais == true ? "checked" : "") />
+                <label for="somenteAtivosAtuais" class="form-check-label">Somente Ativos na Data Atual</label>
+            </div>
+            <button type="submit" class="btn btn-primary">Pesquisar</button>
+        </form>
+    </div>
+</div>
+
 <!-- Conteúdo principal ajustado para a barra -->
 <div class="main-content container">
     <h1>Os meus Ativos Financeiros</h1>
     <div class="d-flex gap-2 mb-3">
         <a asp-action="Create" class="btn btn-primary">Inserir Novo Ativo</a>
-        <button class="btn btn-primary" onclick="openSidebar()">Pesquisar</button>
-    </div>
-    <div id="filterSidebar" class="sidebar">
-        <span class="close-btn" onclick="closeSidebar()">×</span>
-        <div class="filter-content">
-            <h4>Filtros de Pesquisa</h4>
-            <form asp-action="Index" method="get">
-                <div class="mb-3">
-                    <label for="nome" class="form-label">Nome</label>
-                    <input type="text" class="form-control" id="nome" name="nome" value="@ViewBag.Nome" placeholder="Ex.: Banco X ou Fundo A" />
-                </div>
-                <div class="mb-3">
-                    <label for="tipo" class="form-label">Tipo</label>
-                    <select class="form-select" id="tipo" name="tipo">
-                        @{
-                            var tipos = new[]
-                            {
-                                new { Value = "", Text = "Todos" },
-                                new { Value = "Deposito", Text = "Depósito a Prazo" },
-                                new { Value = "Fundo", Text = "Fundo de Investimento" },
-                                new { Value = "Imovel", Text = "Imóvel Arrendado" }
-                            };
-                            foreach (var tipoOption in tipos)
-                            {
-                                if (ViewBag.Tipo == tipoOption.Value || (string.IsNullOrEmpty(ViewBag.Tipo) && tipoOption.Value == ""))
-                                {
-                                    <option value="@tipoOption.Value" selected>@tipoOption.Text</option>
-                                }
-                                else
-                                {
-                                    <option value="@tipoOption.Value">@tipoOption.Text</option>
-                                }
-                            }
-                        }
-                    </select>
-                </div>
-                <div class="mb-3">
-                    <label for="montanteAplicado" class="form-label">Montante Aplicado</label>
-                    <input type="number" class="form-control" id="montanteAplicado" name="montanteAplicado" value="@ViewBag.MontanteAplicado" placeholder="Ex.: 1000" step="0.01" />
-                </div>
-                <div class="mb-3 form-check">
-                    <input type="checkbox" class="form-check-input" id="somenteAtivosAtuais" name="somenteAtivosAtuais" value="true" @(ViewBag.SomenteAtivosAtuais == true ? "checked" : "") />
-                    <label for="somenteAtivosAtuais" class="form-check-label">Somente Ativos na Data Atual</label>
-                </div>
-                <button type="submit" class="btn btn-primary" onclick="closeSidebar()">Pesquisar</button>
-            </form>
-        </div>
+        <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#filterSidebar" aria-controls="filterSidebar">Pesquisar</button>
     </div>
 
     @if (ViewBag.SuccessMessage != null)
@@ -302,93 +287,85 @@
     <div class="table-container">
         <table class="table table-striped">
             <thead>
-            <tr>
-                <th>Nome</th>
-                <th>Tipo</th>
-                <th>Valor Inicial</th>
-                <th>Data Início</th>
-                <th>Duração (meses)</th>
-                <th>Imposto (%)</th>
-                <th>Ações</th>
-            </tr>
+                <tr>
+                    <th>Nome</th>
+                    <th>Tipo</th>
+                    <th>Valor Inicial</th>
+                    <th>Data Início</th>
+                    <th>Duração (meses)</th>
+                    <th>Imposto (%)</th>
+                    <th>Ações</th>
+                </tr>
             </thead>
             <tbody>
-            @if (Model != null && Model.Any())
-            {
-                @foreach (var ativo in Model)
+                @if (Model != null && Model.Any())
+                {
+                    @foreach (var ativo in Model)
+                    {
+                        <tr>
+                            <td>
+                                @if (ativo.id_deposito.HasValue)
+                                {
+                                    @(ativo.id_depositoNavigation?.id_bancoNavigation?.nome_banco + " - " + ativo.id_depositoNavigation?.numero_conta_banco)
+                                }
+                                else if (ativo.id_fundo.HasValue)
+                                {
+                                    @ativo.id_fundoNavigation?.nome
+                                }
+                                else if (ativo.id_imovel.HasValue)
+                                {
+                                    @ativo.id_imovelNavigation?.designacao
+                                }
+                                else
+                                {
+                                    @: Sem Nome
+                                }
+                            </td>
+                            <td>
+                                @if (ativo.id_deposito.HasValue) { <text>Depósito</text> }
+                                else if (ativo.id_fundo.HasValue) { <text>Fundo</text> }
+                                else if (ativo.id_imovel.HasValue) { <text>Imóvel</text> }
+                                else { <text>Outro</text> }
+                            </td>
+                            <td>
+                                @if (ativo.id_deposito.HasValue)
+                                {
+                                    @ativo.id_depositoNavigation?.valor_deposito
+                                }
+                                else if (ativo.id_fundo.HasValue)
+                                {
+                                    @ativo.id_fundoNavigation?.valor_investido
+                                }
+                                else if (ativo.id_imovel.HasValue)
+                                {
+                                    @ativo.id_imovelNavigation?.valor_imovel
+                                }
+                                else
+                                {
+                                    @: N/A
+                                }
+                            </td>
+                            <td>@ativo.data_inicio.ToString("dd/MM/yyyy")</td>
+                            <td>@ativo.duracao_meses</td>
+                            <td>@ativo.percentual_imposto</td>
+                            <td>
+                                <a asp-action="Edit" asp-route-id="@ativo.id_ativo" class="btn btn-sm btn-primary">Atualizar</a>
+                                <a asp-action="Delete" asp-route-id="@ativo.id_ativo" class="btn btn-sm btn-danger">Apagar</a>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
                 {
                     <tr>
-                        <td>
-                            @if (ativo.id_deposito.HasValue)
-                            {
-                                @(ativo.id_depositoNavigation?.id_bancoNavigation?.nome_banco + " - " + ativo.id_depositoNavigation?.numero_conta_banco)
-                            }
-                            else if (ativo.id_fundo.HasValue)
-                            {
-                                @ativo.id_fundoNavigation?.nome
-                            }
-                            else if (ativo.id_imovel.HasValue)
-                            {
-                                @ativo.id_imovelNavigation?.designacao
-                            }
-                            else
-                            {
-                                @: Sem Nome
-                            }
-                        </td>
-                        <td>
-                            @if (ativo.id_deposito.HasValue) { <text>Depósito</text> }
-                            else if (ativo.id_fundo.HasValue) { <text>Fundo</text> }
-                            else if (ativo.id_imovel.HasValue) { <text>Imóvel</text> }
-                            else { <text>Outro</text> }
-                        </td>
-                        <td>
-                            @if (ativo.id_deposito.HasValue)
-                            {
-                                @ativo.id_depositoNavigation?.valor_deposito
-                            }
-                            else if (ativo.id_fundo.HasValue)
-                            {
-                                @ativo.id_fundoNavigation?.valor_investido
-                            }
-                            else if (ativo.id_imovel.HasValue)
-                            {
-                                @ativo.id_imovelNavigation?.valor_imovel
-                            }
-                            else
-                            {
-                                @: N/A
-                            }
-                        </td>
-                        <td>@ativo.data_inicio.ToString("dd/MM/yyyy")</td>
-                        <td>@ativo.duracao_meses</td>
-                        <td>@ativo.percentual_imposto</td>
-                        <td>
-                            <a asp-action="Edit" asp-route-id="@ativo.id_ativo" class="btn btn-sm btn-primary">Atualizar</a>
-                            <a asp-action="Delete" asp-route-id="@ativo.id_ativo" class="btn btn-sm btn-danger">Apagar</a>
-                        </td>
+                        <td colspan="7" class="text-center">Nenhum ativo financeiro encontrado.</td>
                     </tr>
                 }
-            }
-            else
-            {
-                <tr>
-                    <td colspan="7" class="text-center">Nenhum ativo financeiro encontrado.</td>
-                </tr>
-            }
             </tbody>
         </table>
     </div>
 </div>
 
-<script>
-    function openSidebar() {
-        document.getElementById("filterSidebar").classList.add("open");
-    }
-    function closeSidebar() {
-        document.getElementById("filterSidebar").classList.remove("open");
-    }
-</script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
