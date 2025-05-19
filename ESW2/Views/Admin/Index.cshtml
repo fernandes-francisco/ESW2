@@ -149,50 +149,31 @@
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             margin-bottom: 20px;
             transition: transform 0.2s;
+            border: 1px solid #dee2e6;
         }
         .dashboard-card:hover {
             transform: translateY(-5px);
         }
-        /* Novos estilos para cards coloridos como na imagem */
-        .card-gerir-bancos .card-header {
-            background-color: #4285F4;
-            color: white;
+        /* Estilos neutros para todos os cards */
+        .card-header {
+            background-color: #f8f9fa;
+            color: #212529;
+            border-bottom: 1px solid #dee2e6;
             border-radius: 10px 10px 0 0;
+            font-weight: 500;
         }
-        .card-configuracoes .card-header {
-            background-color: #34A853;
-            color: white;
-            border-radius: 10px 10px 0 0;
+        .card-body {
+            background-color: #ffffff;
         }
-        .card-relatorios .card-header {
-            background-color: #EA4335;
-            color: white;
-            border-radius: 10px 10px 0 0;
-        }
-        .card-estatisticas .card-header {
-            background-color: #FBBC05;
-            color: white;
-            border-radius: 10px 10px 0 0;
-        }
-        .card-notificacoes .card-header {
-            background-color: #9C27B0;
-            color: white;
-            border-radius: 10px 10px 0 0;
-        }
-        /* Botões com cores correspondentes */
-        .btn-gerir-bancos {
-            background-color: #4285F4;
-            border-color: #4285F4;
+        /* Botão neutro */
+        .btn-neutral {
+            background-color: #6c757d;
+            border-color: #6c757d;
             color: white;
         }
-        .btn-configuracoes {
-            background-color: #34A853;
-            border-color: #34A853;
-            color: white;
-        }
-        .btn-relatorios {
-            background-color: #EA4335;
-            border-color: #EA4335;
+        .btn-neutral:hover {
+            background-color: #5a6268;
+            border-color: #5a6268;
             color: white;
         }
     </style>
@@ -269,37 +250,37 @@
 
         <div class="row">
             <div class="col-md-4">
-                <div class="card dashboard-card card-gerir-bancos">
+                <div class="card dashboard-card">
                     <div class="card-header">
                         <h5 class="mb-0"><i class="bi bi-bank me-2"></i>Gerir Bancos</h5>
                     </div>
                     <div class="card-body">
                         <p>Adicione, edite ou remova bancos do sistema.</p>
-                        <a asp-controller="Admin" asp-action="Banks" class="btn btn-gerir-bancos">Aceder</a>
+                        <a asp-controller="Admin" asp-action="Banks" class="btn btn-neutral">Aceder</a>
                     </div>
                 </div>
             </div>
 
             <div class="col-md-4">
-                <div class="card dashboard-card card-configuracoes">
+                <div class="card dashboard-card">
                     <div class="card-header">
                         <h5 class="mb-0"><i class="bi bi-gear me-2"></i>Configurações</h5>
                     </div>
                     <div class="card-body">
                         <p>Configure taxas de juros e impostos do sistema.</p>
-                        <a asp-controller="Admin" asp-action="Settings" class="btn btn-configuracoes">Aceder</a>
+                        <a asp-controller="Admin" asp-action="Settings" class="btn btn-neutral">Aceder</a>
                     </div>
                 </div>
             </div>
 
             <div class="col-md-4">
-                <div class="card dashboard-card card-relatorios">
+                <div class="card dashboard-card">
                     <div class="card-header">
                         <h5 class="mb-0"><i class="bi bi-file-earmark-text me-2"></i>Relatórios</h5>
                     </div>
                     <div class="card-body">
                         <p>Visualize relatórios de depósitos por banco.</p>
-                        <a asp-controller="Admin" asp-action="RelatorioBancos" class="btn btn-relatorios">Aceder</a>
+                        <a asp-controller="Admin" asp-action="RelatorioBancos" class="btn btn-neutral">Aceder</a>
                     </div>
                 </div>
             </div>
@@ -307,7 +288,7 @@
 
         <div class="row mt-4">
             <div class="col-md-6">
-                <div class="card dashboard-card card-estatisticas">
+                <div class="card dashboard-card">
                     <div class="card-header">
                         <h5 class="mb-0"><i class="bi bi-graph-up me-2"></i>Estatísticas</h5>
                     </div>
@@ -320,7 +301,7 @@
             </div>
 
             <div class="col-md-6">
-                <div class="card dashboard-card card-notificacoes">
+                <div class="card dashboard-card">
                     <div class="card-header">
                         <h5 class="mb-0"><i class="bi bi-bell me-2"></i>Notificações</h5>
                     </div>
