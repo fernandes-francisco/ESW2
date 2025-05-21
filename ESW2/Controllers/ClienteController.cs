@@ -20,7 +20,80 @@ namespace ESW2.Controllers
         public IActionResult Perfil()
         {
             _logger.Log("Acedendo ao perfil do cliente...");
+
+            var username = User.Identity?.Name;
+            if (string.IsNullOrEmpty(username))
+            {
+                _logger.Log("Erro: Username não encontrado para acesso ao Perfil.");
+                return Unauthorized("Username not found.");
+            }
+
+            var cliente = _context.utilizador_clientes
+                .Include(c => c.id_utilizadorNavigation)
+                .FirstOrDefault(c => c.id_utilizadorNavigation.username == username);
+
+            int totalAtivos = 0;
+            if (cliente != null)
+                totalAtivos = _context.ativo_financeiros.Count(a => a.id_cliente == cliente.id_cliente);
+
+            ViewBag.Cliente = cliente;
+            ViewBag.TotalAtivos = totalAtivos;
+
             return View();
+        }
+
+        [HttpPost]
+        public IActionResult EditarPerfil(string Nif, string Morada)
+        {
+            var username = User.Identity?.Name;
+            var cliente = _context.utilizador_clientes
+                .Include(c => c.id_utilizadorNavigation)
+                .FirstOrDefault(c => c.id_utilizadorNavigation.username == username);
+
+            if (cliente != null)
+            {
+                cliente.nif = Nif;
+                cliente.morada = Morada;
+                _context.SaveChanges();
+                TempData["SuccessMessage"] = "Perfil atualizado com sucesso!";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Erro ao atualizar perfil.";
+            }
+            return RedirectToAction("Perfil");
+        }
+
+        [HttpPost]
+        public IActionResult AlterarSenha(string SenhaAtual, string NovaSenha, string ConfirmarNovaSenha)
+        {
+            var username = User.Identity?.Name;
+            var utilizador = _context.utilizadors.FirstOrDefault(u => u.username == username);
+
+            if (NovaSenha != ConfirmarNovaSenha)
+            {
+                TempData["ErrorMessage"] = "As palavras.passe não coincidem.";
+                return RedirectToAction("Perfil");
+            }
+
+            if (utilizador == null)
+            {
+                TempData["ErrorMessage"] = "Utilizador não encontrado.";
+                return RedirectToAction("Perfil");
+            }
+
+            // Exemplo simples, ajuste conforme sua autenticação real!
+            if (utilizador.password != SenhaAtual)
+            {
+                TempData["ErrorMessage"] = "Palavra-passe atual incorreta.";
+                return RedirectToAction("Perfil");
+            }
+
+            utilizador.password = NovaSenha;
+            _context.SaveChanges();
+
+            TempData["SuccessMessage"] = "Palavra-passe alterada com sucesso!";
+            return RedirectToAction("Perfil");
         }
 
         public IActionResult Config()

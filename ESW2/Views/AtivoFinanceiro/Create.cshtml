@@ -151,6 +151,21 @@
         .offcanvas-body {
             padding-top: 2rem !important;
         }
+        .btn-back {
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            padding: 0.5rem 1.5rem;
+            border-radius: 5px;
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+            align-self: flex-start;
+            width: auto;
+        }
+        .btn-back:hover {
+            background-color: #5a6268;
+            color: white;
+        }
     </style>
 </head>
 <body>
@@ -252,9 +267,10 @@
         </div>
     </div>
 
-    <div class="mb-3">
-        <a asp-controller="AtivoFinanceiro" asp-action="Index" class="btn btn-secondary">Voltar</a>
-    </div>
+    <a asp-controller="AtivoFinanceiro" asp-action="Index" class="btn btn-back mb-3">
+        <i class="bi bi-arrow-left me-2"></i>Voltar
+    </a>
+
 
     <form asp-action="Create" method="post">
         <input type="hidden" name="tipoAtivo" value="@tipoAtivo" />
