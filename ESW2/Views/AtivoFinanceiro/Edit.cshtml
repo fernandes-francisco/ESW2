@@ -20,7 +20,7 @@
             margin: 0;
             padding: 0;
             background-color: #f8f9fa;
-            overflow: auto;
+            overflow: hidden;
         }
         .top-bar {
             width: 100%;
@@ -154,13 +154,9 @@
     </div>
     <div class="offcanvas-body px-4">
         <ul class="nav flex-column menu-links">
+            <!-- Painel do Cliente removido -->
             <li class="nav-item mb-2">
-                <a class="nav-link" asp-controller="Cliente" asp-action="Index">
-                    <i class="bi bi-house-door"></i>Painel do Cliente
-                </a>
-            </li>
-            <li class="nav-item mb-2">
-                <a class="nav-link active" asp-controller="AtivoFinanceiro" asp-action="Index">
+                <a class="nav-link" asp-controller="AtivoFinanceiro" asp-action="Index">
                     <i class="bi bi-wallet2"></i>Os Meus Ativos
                 </a>
             </li>

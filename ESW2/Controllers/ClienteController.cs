@@ -3,6 +3,10 @@ using ESW2.Utilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using System.Threading.Tasks;
+using System.Linq;
 
 namespace ESW2.Controllers
 {
@@ -43,7 +47,7 @@ namespace ESW2.Controllers
         }
 
         [HttpPost]
-        public IActionResult EditarPerfil(string Nif, string Morada)
+        public IActionResult EditarPerfil(string Nif, string Morada, string Email)
         {
             var username = User.Identity?.Name;
             var cliente = _context.utilizador_clientes
@@ -54,6 +58,10 @@ namespace ESW2.Controllers
             {
                 cliente.nif = Nif;
                 cliente.morada = Morada;
+                if (!string.IsNullOrWhiteSpace(Email))
+                {
+                    cliente.id_utilizadorNavigation.email = Email;
+                }
                 _context.SaveChanges();
                 TempData["SuccessMessage"] = "Perfil atualizado com sucesso!";
             }
@@ -72,7 +80,7 @@ namespace ESW2.Controllers
 
             if (NovaSenha != ConfirmarNovaSenha)
             {
-                TempData["ErrorMessage"] = "As palavras.passe não coincidem.";
+                TempData["ErrorMessage"] = "As palavras-passe não coincidem.";
                 return RedirectToAction("Perfil");
             }
 
@@ -96,43 +104,48 @@ namespace ESW2.Controllers
             return RedirectToAction("Perfil");
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EliminarPerfil()
+        {
+            var username = User.Identity?.Name;
+            var cliente = await _context.utilizador_clientes
+                .Include(c => c.id_utilizadorNavigation)
+                .FirstOrDefaultAsync(c => c.id_utilizadorNavigation.username == username);
+
+            if (cliente != null)
+            {
+                // Apaga todos os ativos financeiros do cliente
+                var ativos = _context.ativo_financeiros.Where(a => a.id_cliente == cliente.id_cliente);
+                _context.ativo_financeiros.RemoveRange(ativos);
+
+                // Apaga o perfil de cliente
+                _context.utilizador_clientes.Remove(cliente);
+
+                // Apaga o utilizador
+                var utilizador = cliente.id_utilizadorNavigation;
+                _context.utilizadors.Remove(utilizador);
+
+                await _context.SaveChangesAsync();
+
+                // Termina a sessão do utilizador
+                await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+                TempData["SuccessMessage"] = "Perfil eliminado com sucesso!";
+                return RedirectToAction("Login", "Account");
+            }
+
+            TempData["ErrorMessage"] = "Ocorreu um erro ao eliminar o perfil.";
+            return RedirectToAction("Perfil");
+        }
+
         public IActionResult Config()
         {
             _logger.Log("Acedendo às configurações do cliente...");
             return View();
         }
 
-        [HttpGet]
-        public IActionResult Index()
-        {
-            var username = User.Identity?.Name;
-            if (string.IsNullOrEmpty(username))
-            {
-                _logger.Log("Erro: Username não encontrado para acesso ao Index.");
-                return Unauthorized("Username not found.");
-            }
-
-            var cliente = _context.utilizador_clientes
-                .Include(c => c.id_utilizadorNavigation)
-                .FirstOrDefault(c => c.id_utilizadorNavigation.username == username);
-
-            if (cliente == null)
-            {
-                _logger.Log($"Erro: Perfil do cliente não encontrado para o username {username}.");
-                return Unauthorized("Client profile not found.");
-            }
-
-            var previewAtivos = _context.ativo_financeiros
-                .Where(a => a.id_cliente == cliente.id_cliente)
-                .OrderByDescending(a => a.data_inicio)
-                .Take(2)
-                .ToList();
-
-            ViewBag.PreviewAtivos = previewAtivos;
-
-            _logger.Log($"Index acedido com sucesso para o cliente {username}. Ativos encontrados: {previewAtivos.Count}.");
-            return View();
-        }
+        // Index REMOVIDO! (Painel do Cliente não existe mais)
 
         // Método para testar o Singleton
         public IActionResult TestLogger()

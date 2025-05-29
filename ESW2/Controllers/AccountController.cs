@@ -89,7 +89,7 @@ namespace ESW2.Controllers
                     }
                     else
                     {
-                        return RedirectToAction("Index", "Cliente");
+                        return RedirectToAction("Index", "AtivoFinanceiro");
                     }
                 }
             }
