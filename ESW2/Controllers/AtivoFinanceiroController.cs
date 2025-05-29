@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using System;
+using ESW2.Models;
+
 
 namespace ESW2.Controllers
 {
@@ -671,7 +673,76 @@ public async Task<IActionResult> Create(
                 TempData["ErrorMessage"] = "Erro inesperado ao apagar o ativo ou registo associado: " + ex.Message;
                 return RedirectToAction(nameof(Index));
             }
+            
         }
+        
+        [HttpGet]
+public async Task<IActionResult> RelatorioLucro(DateTime? dataInicio, DateTime? dataFim)
+{
+    var clienteId = await GetCurrentClienteId();
+    if (clienteId == null)
+    {
+        return Unauthorized("Perfil de cliente não encontrado.");
+    }
+
+    var model = new RelatorioLucroViewModel
+    {
+        DataInicio = dataInicio,
+        DataFim = dataFim,
+        Linhas = new List<LinhaRelatorioLucro>()
+    };
+
+    if (dataInicio.HasValue && dataFim.HasValue)
+    {
+        var ativos = await _context.ativo_financeiros
+            .Include(a => a.id_depositoNavigation)
+            .Include(a => a.id_fundoNavigation)
+            .Include(a => a.id_imovelNavigation)
+            .Where(a => a.id_cliente == clienteId.Value &&
+                        a.data_inicio.ToDateTime(TimeOnly.MinValue) <= dataFim &&
+                        a.data_inicio.ToDateTime(TimeOnly.MinValue).AddMonths(a.duracao_meses) >= dataInicio)
+            .ToListAsync();
+
+        foreach (var ativo in ativos)
+        {
+            var dataInicioEfetiva = ativo.data_inicio.ToDateTime(TimeOnly.MinValue);
+            var dataFimEfetiva = dataInicioEfetiva.AddMonths(ativo.duracao_meses);
+            var inicio = dataInicio.Value > dataInicioEfetiva ? dataInicio.Value : dataInicioEfetiva;
+            var fim = dataFim.Value < dataFimEfetiva ? dataFim.Value : dataFimEfetiva;
+
+            int meses = ((fim.Year - inicio.Year) * 12) + fim.Month - inicio.Month + 1;
+
+            decimal rendimentoMensalBruto = 0;
+            if (ativo.id_deposito.HasValue)
+                rendimentoMensalBruto = (decimal)(ativo.id_depositoNavigation.valor_deposito * (ativo.id_depositoNavigation.taxa_juro_anual / 100.0) / 12.0);
+            else if (ativo.id_fundo.HasValue)
+                rendimentoMensalBruto = (decimal)(ativo.id_fundoNavigation.valor_investido * (ativo.id_fundoNavigation.taxa_juro_padrao / 100.0) / 12.0);
+            else if (ativo.id_imovel.HasValue)
+                rendimentoMensalBruto = (decimal)(ativo.id_imovelNavigation.valor_renda - ativo.id_imovelNavigation.valor_mensal_cond - (ativo.id_imovelNavigation.valor_anual_despesas / 12.0));
+
+            rendimentoMensalBruto = Math.Max(rendimentoMensalBruto, 0);
+
+            decimal rendimentoMensalLiquido = rendimentoMensalBruto * (1m - (decimal)ativo.percentual_imposto / 100m);
+            decimal lucroTotalBruto = rendimentoMensalBruto * meses;
+            decimal lucroTotalLiquido = rendimentoMensalLiquido * meses;
+
+            string nome = ativo.id_deposito.HasValue ? $"Depósito - {ativo.id_depositoNavigation.numero_conta_banco}" :
+                          ativo.id_fundo.HasValue ? $"Fundo - {ativo.id_fundoNavigation.nome}" :
+                          ativo.id_imovel.HasValue ? $"Imóvel - {ativo.id_imovelNavigation.designacao}" : "Ativo";
+
+            model.Linhas.Add(new LinhaRelatorioLucro
+            {
+                NomeAtivo = nome,
+                LucroTotalBruto = lucroTotalBruto,
+                LucroTotalLiquido = lucroTotalLiquido,
+                LucroMensalBruto = rendimentoMensalBruto,
+                LucroMensalLiquido = rendimentoMensalLiquido
+            });
+        }
+    }
+
+    return View(model);
+}
 
         private bool ativo_financeiroExists(int id)
         {
