@@ -1,0 +1,38 @@
+﻿@model ESW2.Models.RelatorioLucroViewModel
+
+<h2>Relatório de Lucros dos Ativos</h2>
+
+<form method="get" asp-action="RelatorioLucro">
+    <label>Data de Início:</label>
+    <input type="date" name="dataInicio" value="@Model.DataInicio?.ToString("yyyy-MM-dd")" />
+    <label>Data de Fim:</label>
+    <input type="date" name="dataFim" value="@Model.DataFim?.ToString("yyyy-MM-dd")" />
+    <button type="submit">Gerar</button>
+</form>
+
+@if (Model.Linhas?.Any() == true)
+{
+    <table>
+        <thead>
+        <tr>
+            <th>Ativo</th>
+            <th>Lucro Total (Bruto)</th>
+            <th>Lucro Total (Líquido)</th>
+            <th>Lucro Mensal Médio (Bruto)</th>
+            <th>Lucro Mensal Médio (Líquido)</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var linha in Model.Linhas)
+        {
+            <tr>
+                <td>@linha.NomeAtivo</td>
+                <td>@linha.LucroTotalBruto.ToString("C")</td>
+                <td>@linha.LucroTotalLiquido.ToString("C")</td>
+                <td>@linha.LucroMensalBruto.ToString("C")</td>
+                <td>@linha.LucroMensalLiquido.ToString("C")</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
