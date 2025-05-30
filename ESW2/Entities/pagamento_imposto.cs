@@ -9,7 +9,7 @@ public partial class pagamento_imposto
 
     public int id_ativo { get; set; }
 
-    public DateOnly data_pagamento { get; set; }
+    public DateTime data_pagamento { get; set; }
 
     public double valor_pago { get; set; }
 
