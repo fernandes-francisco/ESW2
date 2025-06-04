@@ -88,6 +88,9 @@ namespace ESW2.Controllers
             {
                 _context.bancos.Remove(banco);
                 await _context.SaveChangesAsync();
+
+                // Define a mensagem de sucesso para exibir na view
+                TempData["SuccessMessage"] = "Banco excluído com sucesso!";
             }
 
             return RedirectToAction(nameof(Banks));
