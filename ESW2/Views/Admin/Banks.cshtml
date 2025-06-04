@@ -216,6 +216,16 @@
 <div class="main-content">
     <div class="banks-container">
         <h2>@ViewData["Title"]</h2>
+
+        @* ALERTA DE SUCESSO *@
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <strong>Sucesso!</strong> @TempData["SuccessMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+            </div>
+        }
+
         <a asp-action="Index" class="btn btn-secondary btn-back">
             <i class="bi bi-arrow-left me-2"></i>Voltar
         </a>
@@ -238,8 +248,17 @@
                             <tr>
                                 <td>@banco.nome_banco</td>
                                 <td>
-                                    <a asp-action="EditBank" asp-route-id="@banco.id_banco" class="btn btn-sm btn-primary">Editar</a>
-                                    <a asp-action="DeleteBank" asp-route-id="@banco.id_banco" class="btn btn-sm btn-danger">Excluir</a>
+                                    <a asp-action="EditBank"
+                                       asp-route-id="@banco.id_banco"
+                                       class="btn btn-sm btn-primary">
+                                        Editar
+                                    </a>
+                                    <a asp-action="DeleteBank"
+                                       asp-route-id="@banco.id_banco"
+                                       class="btn btn-sm btn-danger"
+                                       onclick="if (!confirm('Tem certeza que deseja excluir este banco?')) return false;;">
+                                        Excluir
+                                    </a>
                                 </td>
                             </tr>
                         }
@@ -248,6 +267,7 @@
                 </div>
             </div>
         </div>
+
 
         <div class="card bank-card">
             <div class="card-header">
