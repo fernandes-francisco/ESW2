@@ -2,21 +2,25 @@
 
 @{
     ViewData["Title"] = "Relatório de Lucros";
+    ViewData["HideNavbar"] = true;
 }
 
 <!DOCTYPE html>
 <html lang="pt">
 <head>
     <meta charset="utf-8" />
-    <title>@ViewData["Title"]</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+
     <style>
-        body {
+        html, body {
+            height: 100%;
             margin: 0;
             padding: 0;
             background-color: #f8f9fa;
+            overflow: auto;
         }
         .top-bar {
             width: 100%;
@@ -41,9 +45,14 @@
             align-items: center;
             cursor: pointer;
         }
+        .hamburger-btn:focus {
+            outline: none;
+        }
         .hamburger-icon {
             width: 28px;
             height: 28px;
+            fill: #fff;
+            display: block;
         }
         .top-bar img {
             height: 190px;
@@ -61,23 +70,38 @@
         .welcome-text a {
             color: #fff;
             text-decoration: none;
+            transition: color 0.2s;
+        }
+        .welcome-text a:hover {
+            color: #e9ecef;
         }
         .main-content {
-            margin-top: 80px;
+            margin-top: 70px;
             padding: 20px;
         }
         .menu-links .nav-link {
             color: #0d6efd;
             border-radius: 8px;
+            transition: background 0.15s, color 0.15s;
             padding: 12px 16px;
-            font-size: 1.1rem;
+            font-size: 1.12rem;
+            font-weight: 500;
             display: flex;
             align-items: center;
             gap: 10px;
         }
-        .menu-links .nav-link:hover, .menu-links .nav-link.active {
+        .menu-links .nav-link:hover,
+        .menu-links .nav-link.active {
             background: #e7f1ff;
             color: #084298;
+            text-decoration: none;
+        }
+        .menu-links .nav-link.text-success {
+            color: #198754;
+        }
+        .menu-links .nav-link.text-success:hover {
+            background: #e9fbe7;
+            color: #146c43;
         }
         .btn-logout {
             font-size: 1.1rem;
@@ -86,6 +110,29 @@
             border-radius: 8px;
             font-weight: 500;
         }
+        .offcanvas-header {
+            border-bottom: 1px solid #e9ecef;
+            padding-bottom: 0.7rem;
+            padding-top: 1.2rem;
+            background-color: #0d6efd;
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .offcanvas-header img {
+            height: 32px;
+            margin-right: 10px;
+        }
+        .offcanvas-body {
+            padding-top: 2rem !important;
+        }
+        .offcanvas-header .btn-close {
+            background-color: white;
+            opacity: 1;
+            position: relative;
+            right: 0;
+        }
     </style>
 </head>
 <body>
@@ -93,8 +140,8 @@
 <!-- Barra azul superior -->
 <div class="top-bar">
     <div class="d-flex align-items-center">
-        <button class="hamburger-btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#sideMenu">
-            <svg class="hamburger-icon" viewBox="0 0 100 80" fill="#fff">
+        <button class="hamburger-btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#sideMenu" aria-label="Abrir menu">
+            <svg class="hamburger-icon" viewBox="0 0 100 80">
                 <rect width="100" height="14" rx="6"></rect>
                 <rect y="33" width="100" height="14" rx="6"></rect>
                 <rect y="66" width="100" height="14" rx="6"></rect>
@@ -110,8 +157,8 @@
 
 <!-- Menu lateral -->
 <div class="offcanvas offcanvas-start" tabindex="-1" id="sideMenu">
-    <div class="offcanvas-header bg-primary text-white">
-        <img src="/ativoslogo.png" alt="Logotipo Ativos360" height="32" />
+    <div class="offcanvas-header">
+        <img src="/ativoslogo.png" alt="Logotipo Ativos360">
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Fechar"></button>
     </div>
     <div class="offcanvas-body px-4">
@@ -148,51 +195,51 @@
     </div>
 </div>
 
-<!-- Conteúdo -->
-<div class="main-content container" style="max-width: 1000px;">
+<!-- Conteúdo principal -->
+<div class="main-content container" style="max-width:1000px;">
     <div class="card shadow p-4">
-        <h2 class="text-center mb-4"> Relatório de Lucros dos Ativos</h2>
+        <h2 class="text-center mb-4">Relatório de Lucros dos Ativos</h2>
 
-        <!-- Formulário -->
         <form method="get" asp-action="RelatorioLucro" class="row g-3 justify-content-center mb-4">
             <div class="col-md-5">
                 <label class="form-label">Data de Início:</label>
-                <input type="date" name="dataInicio" class="form-control" value="@Model.DataInicio?.ToString("yyyy-MM-dd")" />
+                <input type="date" name="dataInicio" class="form-control"
+                       value="@Model.DataInicio?.ToString("yyyy-MM-dd")" />
             </div>
             <div class="col-md-5">
                 <label class="form-label">Data de Fim:</label>
-                <input type="date" name="dataFim" class="form-control" value="@Model.DataFim?.ToString("yyyy-MM-dd")" />
+                <input type="date" name="dataFim" class="form-control"
+                       value="@Model.DataFim?.ToString("yyyy-MM-dd")" />
             </div>
             <div class="col-12 text-center">
                 <button type="submit" class="btn btn-primary mt-2">Gerar</button>
             </div>
         </form>
 
-        <!-- Resultado -->
         @if (Model.Linhas?.Any() == true)
         {
             <div class="table-responsive">
                 <table class="table table-bordered table-striped text-center">
                     <thead class="table-light">
-                        <tr>
-                            <th>Ativo</th>
-                            <th>Lucro Total (Bruto)</th>
-                            <th>Lucro Total (Líquido)</th>
-                            <th>Lucro Mensal Médio (Bruto)</th>
-                            <th>Lucro Mensal Médio (Líquido)</th>
-                        </tr>
+                    <tr>
+                        <th>Ativo</th>
+                        <th>Lucro Total (Bruto)</th>
+                        <th>Lucro Total (Líquido)</th>
+                        <th>Lucro Mensal Médio (Bruto)</th>
+                        <th>Lucro Mensal Médio (Líquido)</th>
+                    </tr>
                     </thead>
                     <tbody>
-                        @foreach (var linha in Model.Linhas)
-                        {
-                            <tr>
-                                <td>@linha.NomeAtivo</td>
-                                <td>@linha.LucroTotalBruto.ToString("C")</td>
-                                <td>@linha.LucroTotalLiquido.ToString("C")</td>
-                                <td>@linha.LucroMensalBruto.ToString("C")</td>
-                                <td>@linha.LucroMensalLiquido.ToString("C")</td>
-                            </tr>
-                        }
+                    @foreach (var linha in Model.Linhas)
+                    {
+                        <tr>
+                            <td>@linha.NomeAtivo</td>
+                            <td>@linha.LucroTotalBruto.ToString("C")</td>
+                            <td>@linha.LucroTotalLiquido.ToString("C")</td>
+                            <td>@linha.LucroMensalBruto.ToString("C")</td>
+                            <td>@linha.LucroMensalLiquido.ToString("C")</td>
+                        </tr>
+                    }
                     </tbody>
                 </table>
             </div>
