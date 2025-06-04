@@ -255,9 +255,15 @@
     <h1>Os meus Ativos Financeiros</h1>
     <div class="d-flex gap-2 mb-3">
         <a asp-action="Create" class="btn btn-primary">Inserir Novo Ativo</a>
-        <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#filterSidebar" aria-controls="filterSidebar">Pesquisar</button>
-        <a asp-action="RelatorioLucro" class="btn btn-success">Ver Relatório de Lucros</a>
-        <a asp-controller="RelatorioImpostos" asp-action="RelatorioImpostos" class="btn btn-warning">Ver Relatório de Impostos</a>
+        <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#filterSidebar" aria-controls="filterSidebar">
+            Pesquisar
+        </button>
+        <!-- Troquei btn-success por btn-primary -->
+        <a asp-action="RelatorioLucro" class="btn btn-primary">Ver Relatório de Lucros</a>
+        <!-- Troquei btn-warning por btn-primary -->
+        <a asp-controller="RelatorioImpostos" asp-action="RelatorioImpostos" class="btn btn-primary">
+            Ver Relatório de Impostos
+        </a>
     </div>
 
 
