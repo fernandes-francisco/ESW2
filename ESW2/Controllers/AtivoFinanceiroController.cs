@@ -386,12 +386,20 @@ public async Task<IActionResult> Create(
     }
     catch (DbUpdateException dbEx)
     {
-        Console.WriteLine($"Erro ao salvar entidade relacionada ({tipoAtivo}): {dbEx.ToString()}");
-        ModelState.AddModelError("", $"Erro ao criar o novo {tipoAtivo}: {dbEx.InnerException?.Message ?? dbEx.Message}");
+        Console.WriteLine($"Erro ao salvar entidade relacionada ({tipoAtivo}): {dbEx}");
+
+        if (dbEx.InnerException?.Message.Contains("deposito_prazo_numero_conta_banco_key") == true)
+        {
+            ModelState.AddModelError("numero_conta_banco_novo", "Já existe um depósito com esse número de conta para o banco selecionado. Por favor utilize outro número.");
+        }
+        else
+        {
+            ModelState.AddModelError("", $"Erro ao criar o novo {tipoAtivo}. Por favor verifique os dados.");
+        }
     }
     catch (Exception ex)
     {
-        Console.WriteLine($"Erro inesperado ao processar entidade relacionada ({tipoAtivo}): {ex.ToString()}");
+        Console.WriteLine($"Erro inesperado ao processar entidade relacionada ({tipoAtivo}): {ex}");
         ModelState.AddModelError("", $"Erro inesperado ao processar o {tipoAtivo}: {ex.Message}");
     }
 
@@ -505,8 +513,11 @@ public async Task<IActionResult> Create(
             if (clienteId == null) return Unauthorized("Perfil de cliente não encontrado.");
 
             var originalAsset = await _context.ativo_financeiros
-                .AsNoTracking()
+                .Include(a => a.id_depositoNavigation)
+                .Include(a => a.id_fundoNavigation)
+                .Include(a => a.id_imovelNavigation)
                 .FirstOrDefaultAsync(a => a.id_ativo == id);
+
 
             if (originalAsset == null) return NotFound($"Ativo financeiro com ID {id} não encontrado para atualização.");
             if (originalAsset.id_cliente != clienteId.Value) return Unauthorized("Não tem permissão para atualizar este ativo.");

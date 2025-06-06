@@ -48,7 +48,19 @@ namespace ESW2.Controllers
                 return View("Banks", banks);
             }
 
-            var banco = new banco { nome_banco = nome_banco.Trim() };
+            nome_banco = nome_banco.Trim();
+
+            bool bancoExiste = _context.bancos
+                .Any(b => b.nome_banco.ToLower() == nome_banco.ToLower());
+
+            if (bancoExiste)
+            {
+                ModelState.AddModelError("nome_banco", "Já existe um banco com este nome.");
+                var banks = _context.bancos.OrderBy(b => b.nome_banco).ToList();
+                return View("Banks", banks);
+            }
+
+            var banco = new banco { nome_banco = nome_banco };
             _context.bancos.Add(banco);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Banks));

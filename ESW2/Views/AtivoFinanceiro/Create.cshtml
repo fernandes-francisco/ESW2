@@ -280,12 +280,18 @@
 
         <div class="mb-3">
             <label asp-for="duracao_meses" class="form-label">Duração (meses):</label>
-            <input asp-for="duracao_meses" type="number" class="form-control" min="1" required />
+            <input asp-for="duracao_meses"
+                   type="number"
+                   class="form-control"
+                   id="duracao_meses"
+                   required
+                   oninvalid="this.setCustomValidity('A duração deve ser de pelo menos 1 mês.')"
+                   oninput="this.setCustomValidity('')" />
             <span asp-validation-for="duracao_meses" class="text-danger"></span>
         </div>
 
         <div class="mb-3">
-            <label asp-for="percentual_imposto" class="form-label">Percentual de Imposto (%):</label>
+            <label asp-for="percentual_imposto" class="form-label">Percentagem de Imposto (%):</label>
             <input asp-for="percentual_imposto" type="number" step="0.01" class="form-control" min="0" required />
             <span asp-validation-for="percentual_imposto" class="text-danger"></span>
         </div>
@@ -311,13 +317,32 @@
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">Número da Conta:</label>
-                            <input type="text" id="numero_conta_banco_novo" name="numero_conta_banco_novo" class="form-control" required />
+                            <label for="numero_conta_banco_novo" class="form-label">Número da Conta:</label>
+                            <input type="number"
+                                   id="numero_conta_banco_novo"
+                                   name="numero_conta_banco_novo"
+                                   class="form-control @(ViewData.ModelState["numero_conta_banco_novo"]?.Errors.Any() == true ? "is-invalid" : "")"
+                                   value="@ViewBag.numero_conta_banco_novo ?? "
+                            min="0"
+                            oninput="this.value = Math.abs(this.value); this.setCustomValidity('')"
+                            oninvalid="this.setCustomValidity('O número da conta não pode ser negativo.')" required />
+                            <span class="text-danger">
+                            @ViewData.ModelState["numero_conta_banco_novo"]?.Errors.FirstOrDefault()?.ErrorMessage
+                            </span>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">Titulares:</label>
-                            <input type="text" id="titulares_novo" name="titulares_novo" class="form-control" required />
+                            <input type="text"
+                                   id="titulares_novo"
+                                   name="titulares_novo"
+                                   class="form-control"
+                                   required
+                                   pattern="^[A-Za-zÀ-ÿ\s]+$"
+                                   onkeypress="return /^[A-Za-zÀ-ÿ\s]$/.test(event.key)"
+                                   oninvalid="this.setCustomValidity('Apenas letras e espaços são permitidos.')"
+                                   oninput="this.setCustomValidity('')" />
+                            <span class="text-danger" data-valmsg-for="titulares_novo" data-valmsg-replace="true"></span>
                         </div>
 
                         <div class="mb-3">

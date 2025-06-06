@@ -20,7 +20,7 @@
             margin: 0;
             padding: 0;
             background-color: #f8f9fa;
-            overflow: hidden;
+            overflow: auto;
         }
         .top-bar {
             width: 100%;
@@ -192,7 +192,9 @@
     <h2>@ViewData["Title"]</h2>
 
     <div class="mb-3">
-        <a asp-action="Index" class="btn btn-secondary">Voltar</a>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="bi bi-arrow-left me-2"></i>Voltar
+        </a>
     </div>
 
     <form asp-action="Edit" method="post">
@@ -213,15 +215,16 @@
         <div class="mb-3">
             <label class="form-label">Data de Início:</label>
             <input name="data_inicio" type="date" class="form-control"
-                   value="@Model.data_inicio.ToString("yyyy-MM-dd")" />
+                   value="@Model.data_inicio.ToString("yyyy-MM-dd")" readonly />
         </div>
 
         <!-- Duração -->
         <div class="mb-3">
             <label class="form-label">Duração (meses):</label>
             <input name="duracao_meses" type="number" min="1" class="form-control"
-                   value="@Model.duracao_meses" />
+                   value="@Model.duracao_meses" readonly />
         </div>
+
 
         <!-- Tipo específico -->
         @if (Model.id_depositoNavigation != null)

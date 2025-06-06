@@ -248,11 +248,6 @@
                             <tr>
                                 <td>@banco.nome_banco</td>
                                 <td>
-                                    <a asp-action="EditBank"
-                                       asp-route-id="@banco.id_banco"
-                                       class="btn btn-sm btn-primary">
-                                        Editar
-                                    </a>
                                     <a asp-action="DeleteBank"
                                        asp-route-id="@banco.id_banco"
                                        class="btn btn-sm btn-danger"
@@ -278,7 +273,14 @@
                     @Html.AntiForgeryToken()
                     <div class="mb-3">
                         <label class="form-label">Nome do Banco</label>
-                        <input name="nome_banco" class="form-control" required />
+                        <input type="text" class="form-control" name="nome_banco" />
+
+                        @if (ViewData.ModelState["nome_banco"]?.Errors.Count > 0)
+                        {
+                            <div class="text-danger">
+                                @ViewData.ModelState["nome_banco"].Errors[0].ErrorMessage
+                            </div>
+                        }
                     </div>
                     <button type="submit" class="btn btn-success">
                         <i class="bi bi-plus-circle me-2"></i>Adicionar
