@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/ESW2.styles.css" asp-append-version="true" />
-    <!-- Inclua Bootstrap Icons para os ícones no menu -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
     <style>
         .offcanvas-header.bg-primary {
@@ -60,7 +59,6 @@
 <body>
 @if (ViewData["HideNavbar"] == null || !(bool)ViewData["HideNavbar"])
 {
-    <!-- TOPO COM BOTÃO HAMBURGER -->
     <header class="bg-white border-bottom shadow-sm p-3">
         <div class="d-flex justify-content-between align-items-center">
             <button class="btn btn-outline-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#sideMenu" aria-controls="sideMenu">
@@ -71,7 +69,6 @@
         </div>
     </header>
 
-    <!-- MENU LATERAL (OFFCANVAS) ESTILIZADO -->
     <div class="offcanvas offcanvas-start" tabindex="-1" id="sideMenu" aria-labelledby="sideMenuLabel">
         <div class="offcanvas-header bg-primary text-white">
             <div class="d-flex align-items-center">
@@ -120,14 +117,12 @@
     </div>
 }
 
-<!-- CONTEÚDO PRINCIPAL -->
 <div class="container mt-4">
     <main role="main" class="pb-3">
         @RenderBody()
     </main>
 </div>
 
-<!-- SCRIPTS -->
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <script src="~/js/site.js" asp-append-version="true"></script>

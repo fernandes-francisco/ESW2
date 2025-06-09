@@ -193,7 +193,7 @@
     </div>
     <div class="welcome-text">
         Bem-vindo, <a href="@Url.Action("Perfil", "Admin")" title="Aceder ao Perfil">@User.Identity.Name</a>
-        <a href="@Url.Action("Perfil", "Admin")" title="Aceder ao Perfil">
+        <a  title="Aceder ao Perfil">
             <i class="bi bi-person-circle"></i>
         </a>
     </div>
@@ -225,11 +225,6 @@
             <li class="nav-item mb-2">
                 <a class="nav-link" asp-controller="Admin" asp-action="RelatorioBancos">
                     <i class="bi bi-file-earmark-text"></i>Relatório de Depósitos por Banco
-                </a>
-            </li>
-            <li class="nav-item mb-2">
-                <a class="nav-link" asp-controller="Admin" asp-action="Perfil">
-                    <i class="bi bi-person"></i>Perfil
                 </a>
             </li>
         </ul>
@@ -281,39 +276,6 @@
                     <div class="card-body">
                         <p>Visualize relatórios de depósitos por banco.</p>
                         <a asp-controller="Admin" asp-action="RelatorioBancos" class="btn btn-neutral">Aceder</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="row mt-4">
-            <div class="col-md-6">
-                <div class="card dashboard-card">
-                    <div class="card-header">
-                        <h5 class="mb-0"><i class="bi bi-graph-up me-2"></i>Estatísticas</h5>
-                    </div>
-                    <div class="card-body">
-                        <p>Total de clientes: <strong>125</strong></p>
-                        <p>Total de ativos: <strong>348</strong></p>
-                        <p>Valor total gerido: <strong>€ 1,245,678.00</strong></p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-6">
-                <div class="card dashboard-card">
-                    <div class="card-header">
-                        <h5 class="mb-0"><i class="bi bi-bell me-2"></i>Notificações</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="alert alert-info mb-2">
-                            <small>Hoje, 14:30</small>
-                            <p class="mb-0">3 novos clientes registrados</p>
-                        </div>
-                        <div class="alert alert-warning mb-2">
-                            <small>Ontem, 16:45</small>
-                            <p class="mb-0">Taxa de juros do Banco XYZ atualizada</p>
-                        </div>
                     </div>
                 </div>
             </div>

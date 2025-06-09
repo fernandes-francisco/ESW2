@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using ESW2.Context;
 using ESW2.Entities;
 using ESW2.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace ESW2.Controllers
 {
@@ -165,11 +166,24 @@ namespace ESW2.Controllers
             return View("RelatorioBancos", resultado);
         }
 
+        
+        [HttpGet]
+        public async Task<IActionResult> Stats()
+        {
+            var stats = new DashboardStatsViewModel
+            {
+                TotalClients      = await _context.utilizador_clientes.CountAsync(),       // counts clients[2]
+                TotalAssets       = await _context.ativo_financeiros.CountAsync(),         // counts financial assets[2]
+                TotalValueManaged = await _context.deposito_prazos
+                    .SumAsync(dp => dp.valor_deposito)         // sums all deposits[2]
+            };
 
+            return View(stats);
+        }
 
 
     }
-
+    
 
     public static class DefaultSettings
     {

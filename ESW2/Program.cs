@@ -9,7 +9,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-// 2. Create a DataSourceBuilder
 var dataSourceBuilder = new NpgsqlDataSourceBuilder(connectionString);
 
 builder.Services.AddDbContext<MyDbContext>(options =>
@@ -21,36 +20,26 @@ builder.Services.AddDbContext<MyDbContext>(options =>
         });
 });
 
-// 4. Build the data source
 var dataSource = dataSourceBuilder.Build();
-// --- End of DataSource Setup ---
-
-
-// Configurar a autenticação com cookies
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
         options.LoginPath = "/Account/Login";
         options.AccessDeniedPath = "/Account/AccessDenied";
         options.Cookie.Name = "UserAuthCookie";
-        // Keep your custom OnRedirectToLogin logic if needed
         options.Events = new CookieAuthenticationEvents
         {
             OnRedirectToLogin = context =>
             {
                 if (context.Request.Path.StartsWithSegments("/Home") ||
                     context.Request.Path.Value == "/" ||
-                    context.Request.Path.Value == "/ESW2") // Consider if "/ESW2" is correct base path
+                    context.Request.Path.Value == "/ESW2") 
                 {
-                    // Only redirect non-Home requests to login? Maybe adjust this logic.
-                    // This current logic seems to *only* redirect Home/Root requests.
-                    // Maybe you intended the opposite: context.Response.StatusCode = 401; return Task.CompletedTask;
-                    // Or maybe redirect everything *except* specific public paths.
+                    
                     context.Response.Redirect(options.LoginPath);
                 }
                 else
                 {
-                    // Let ASP.NET Core handle the default redirect URI for other paths
                     context.Response.Redirect(context.RedirectUri);
                 }
                 return Task.CompletedTask;
@@ -58,31 +47,23 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         };
     });
 
-// Configurar a ligação à base de dados PostgreSQL
-// MODIFY THIS line to use the dataSource
 builder.Services.AddDbContext<MyDbContext>(options =>
-    options.UseNpgsql(dataSource) ); // Optional: Add if your DB uses snake_case
+    options.UseNpgsql(dataSource) ); 
 
-// Adicionar controladores com vistas
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
-// Configuração do pipeline de processamento HTTP
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
-// Consider carefully if HTTPS redirection is needed/configured
-// app.UseHttpsRedirection(); // Commented out if not using HTTPS locally or if proxy handles it
 app.UseStaticFiles();
 
 app.UseRouting();
 
-// Ativar a autenticação e autorização (Order matters: AuthN before AuthZ)
 app.UseAuthentication();
 app.UseAuthorization();
 
