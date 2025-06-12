@@ -1,0 +1,22 @@
+{
+  "version": 2,
+  "dgSpecHash": "WuLoGfG5nfquzAglvZ24wmOfO9q4+317xH5GXLVvsQ/5eF/yN7zhaQbTlKoAfJqvCPt9kIwjcS85xm4W+C72kQ==",
+  "success": true,
+  "projectFilePath": "/app/ESW2.UITests/ESW2.UITests.csproj",
+  "expectedPackageFiles": [
+    "/home/swebot/.nuget/packages/coverlet.collector/6.0.0/coverlet.collector.6.0.0.nupkg.sha512",
+    "/home/swebot/.nuget/packages/microsoft.codecoverage/17.6.0/microsoft.codecoverage.17.6.0.nupkg.sha512",
+    "/home/swebot/.nuget/packages/microsoft.net.test.sdk/17.6.0/microsoft.net.test.sdk.17.6.0.nupkg.sha512",
+    "/home/swebot/.nuget/packages/microsoft.testplatform.objectmodel/17.6.0/microsoft.testplatform.objectmodel.17.6.0.nupkg.sha512",
+    "/home/swebot/.nuget/packages/microsoft.testplatform.testhost/17.6.0/microsoft.testplatform.testhost.17.6.0.nupkg.sha512",
+    "/home/swebot/.nuget/packages/mstest.testadapter/3.0.4/mstest.testadapter.3.0.4.nupkg.sha512",
+    "/home/swebot/.nuget/packages/mstest.testframework/3.0.4/mstest.testframework.3.0.4.nupkg.sha512",
+    "/home/swebot/.nuget/packages/newtonsoft.json/13.0.1/newtonsoft.json.13.0.1.nupkg.sha512",
+    "/home/swebot/.nuget/packages/nuget.frameworks/5.11.0/nuget.frameworks.5.11.0.nupkg.sha512",
+    "/home/swebot/.nuget/packages/selenium.support/4.33.0/selenium.support.4.33.0.nupkg.sha512",
+    "/home/swebot/.nuget/packages/selenium.webdriver/4.33.0/selenium.webdriver.4.33.0.nupkg.sha512",
+    "/home/swebot/.nuget/packages/selenium.webdriver.chromedriver/137.0.7151.7000/selenium.webdriver.chromedriver.137.0.7151.7000.nupkg.sha512",
+    "/home/swebot/.nuget/packages/system.reflection.metadata/1.6.0/system.reflection.metadata.1.6.0.nupkg.sha512"
+  ],
+  "logs": []
+}

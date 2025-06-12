@@ -1,6 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
+#
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ESW2", "ESW2\ESW2.csproj", "{BD51F4FD-E9CC-4507-AF5A-49A40E9DBEBA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ESW2.UITests", "ESW2.UITests\ESW2.UITests.csproj", "{F187B7DC-BB42-4D4F-A7A1-DF0E9E1AA8C4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -12,5 +15,9 @@ Global
 		{BD51F4FD-E9CC-4507-AF5A-49A40E9DBEBA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BD51F4FD-E9CC-4507-AF5A-49A40E9DBEBA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BD51F4FD-E9CC-4507-AF5A-49A40E9DBEBA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F187B7DC-BB42-4D4F-A7A1-DF0E9E1AA8C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F187B7DC-BB42-4D4F-A7A1-DF0E9E1AA8C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F187B7DC-BB42-4D4F-A7A1-DF0E9E1AA8C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F187B7DC-BB42-4D4F-A7A1-DF0E9E1AA8C4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
