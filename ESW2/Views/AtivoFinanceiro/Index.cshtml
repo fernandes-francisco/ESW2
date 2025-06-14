@@ -213,38 +213,74 @@
                 <input type="text" class="form-control" id="nome" name="nome" value="@ViewBag.Nome" placeholder="Ex.: Banco X ou Fundo A" />
             </div>
             <div class="mb-3">
-                <label for="tipo" class="form-label">Tipo</label>
-                <select class="form-select" id="tipo" name="tipo">
+                <label for="tipo" class="form-label">Tipo de Investimento</label>
+
+                <!-- Campo de seleção múltipla -->
+                <select class="form-select" id="tipo" name="tipo" multiple>
                     @{
                         var tipos = new[]
                         {
-                            new { Value = "", Text = "Todos" },
                             new { Value = "Deposito", Text = "Depósito a Prazo" },
                             new { Value = "Fundo", Text = "Fundo de Investimento" },
                             new { Value = "Imovel", Text = "Imóvel Arrendado" }
                         };
+                        var tiposSelecionados = ViewBag.Tipo as IEnumerable<string> ?? new List<string>();
                         foreach (var tipoOption in tipos)
                         {
-                            if (ViewBag.Tipo == tipoOption.Value || (string.IsNullOrEmpty(ViewBag.Tipo) && tipoOption.Value == ""))
-                            {
-                                <option value="@tipoOption.Value" selected>@tipoOption.Text</option>
-                            }
-                            else
-                            {
-                                <option value="@tipoOption.Value">@tipoOption.Text</option>
-                            }
+                            <option value="@tipoOption.Value"
+                                    selected="@(tiposSelecionados.Contains(tipoOption.Value) ? "selected" : null)">
+                                @tipoOption.Text
+                            </option>
                         }
                     }
                 </select>
             </div>
             <div class="mb-3">
                 <label for="montanteAplicado" class="form-label">Montante Aplicado</label>
-                <input type="number" class="form-control" id="montanteAplicado" name="montanteAplicado" value="@ViewBag.MontanteAplicado" placeholder="Ex.: 1000" step="0.01" />
+
+                <!-- Campo formatado (visível ao usuário) -->
+                <input
+                    type="text"
+                    class="form-control"
+                    id="montanteAplicado"
+                    placeholder="Ex.: 1000,00"
+                />
+
+                <!-- Campo oculto para envio do valor numérico ao servidor -->
+                <input
+                    type="hidden"
+                    name="montanteAplicado"
+                    id="montanteAplicadoHidden"
+                    value="@ViewBag.MontanteAplicado"
+                />
             </div>
-            <div class="mb-3 form-check">
-                <input type="checkbox" class="form-check-input" id="somenteAtivosAtuais" name="somenteAtivosAtuais" value="true" @(ViewBag.SomenteAtivosAtuais == true ? "checked" : "") />
-                <label for="somenteAtivosAtuais" class="form-check-label">Somente Ativos na Data Atual</label>
-            </div>
+
+            <!-- Biblioteca Cleave.js -->
+            <script src="https://cdn.jsdelivr.net/npm/cleave.js@1.6.0/dist/cleave.min.js"></script>
+
+            <!-- Script de configuração -->
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    const inputFormatado = document.getElementById('montanteAplicado');
+                    const inputOculto = document.getElementById('montanteAplicadoHidden');
+
+                    // Configuração numeral sem separador de milhar
+                    const cleave = new Cleave(inputFormatado, {
+                        numeral: true,
+                        numeralDecimalScale: 2,          // Limita a 2 casas decimais
+                        numeralDecimalMark: ',',         // Vírgula como separador decimal
+                        onValueChanged: function () {
+                            // Atualiza o campo oculto com o valor numérico puro (ex: 1000.00)
+                            inputOculto.value = cleave.getRawValue().replace(',', '.');
+                        }
+                    });
+
+                    // Preenche o campo formatado com o valor inicial (se houver)
+                    if (inputOculto.value) {
+                        cleave.setRawValue(inputOculto.value.replace('.', ','));
+                    }
+                });
+            </script>
             <button type="submit" class="btn btn-primary">Pesquisar</button>
         </form>
     </div>

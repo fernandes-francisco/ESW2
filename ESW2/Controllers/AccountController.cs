@@ -115,7 +115,7 @@ namespace ESW2.Controllers
             // 1. Basic validation
             if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
             {
-                ViewData["ErrorMessage"] = "Nome de utilizador, email e senha são obrigatórios.";
+                ViewData["ErrorMessage"] = "Por favor, preencha todos os campos.";
                 return View();
             }
 
